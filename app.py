@@ -119,7 +119,7 @@ def initialize_gemini():
         
         genai.configure(api_key=api_key)
         return genai.GenerativeModel(
-            model_name='gemini-1.5-pro',
+            model_name='gemini-pro',
             generation_config={
                 'temperature': 0.1,  # Précision maximale pour les rapports réglementaires
                 'top_p': 0.95,
