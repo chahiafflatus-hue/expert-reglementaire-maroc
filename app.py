@@ -182,9 +182,9 @@ def initialize_gemini():
         
         genai.configure(api_key=api_key)
         
-        # Use Gemini 1.5 Pro with grounding for web search
+        # Use Gemini 1.5 Flash with grounding for web search
         model = genai.GenerativeModel(
-            model_name='gemini-1.5-pro',
+            model_name='gemini-1.5-flash-latest',
             generation_config={
                 'temperature': 0.2,  # Un peu plus élevé pour utiliser le search
                 'top_p': 0.95,
