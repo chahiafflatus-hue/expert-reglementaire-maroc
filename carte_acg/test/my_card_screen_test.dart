@@ -69,6 +69,14 @@ void main() {
     await _pump(tester, const Size(390, 760));
     expect(tester.getBottomLeft(find.text('Modifier')).dy, lessThan(760 - 40));
     expect(tester.takeException(), isNull);
+
+    // « Besoin » remplace le QR du contact par celui du formulaire, « Contact » y revient.
+    expect(find.textContaining('ENREGISTRER'), findsOneWidget);
+    await tester.tap(find.text('Besoin'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('EXPRIMER'), findsOneWidget);
+    expect(find.text('Contact'), findsOneWidget);
+    expect(tester.takeException(), isNull);
     if (Platform.environment['CARTE_SCREENSHOT'] != null) {
       await expectLater(
         find.byType(MaterialApp),

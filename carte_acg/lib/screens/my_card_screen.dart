@@ -22,6 +22,9 @@ class _MyCardScreenState extends State<MyCardScreen> {
   CardData? _card;
   bool _loading = true;
 
+  /// Vrai : le QR code affiché ouvre le formulaire d'expression de besoin au lieu du contact.
+  bool _besoin = false;
+
   @override
   void initState() {
     super.initState();
@@ -68,11 +71,20 @@ class _MyCardScreenState extends State<MyCardScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         // Le QR code occupe la hauteur restante ; sur un petit écran la page défile.
                         child: _QrBlock(
-                          data: card.toVCard(),
+                          data: _besoin ? kBesoinUrl : card.toVCard(),
+                          caption: _besoin
+                              ? 'SCANNEZ POUR EXPRIMER\nVOTRE BESOIN'
+                              : 'SCANNEZ POUR ENREGISTRER\nMON CONTACT',
                           size: (box.maxHeight - 360).clamp(170.0, 240.0),
                         ),
                       ),
-                      _Actions(card: card, onEdit: _edit),
+                      _Actions(
+                        card: card,
+                        besoin: _besoin,
+                        onToggleBesoin: () =>
+                            setState(() => _besoin = !_besoin),
+                        onEdit: _edit,
+                      ),
                     ],
                   ),
                 ),
@@ -257,8 +269,13 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _QrBlock extends StatelessWidget {
-  const _QrBlock({required this.data, required this.size});
+  const _QrBlock({
+    required this.data,
+    required this.caption,
+    required this.size,
+  });
   final String data;
+  final String caption;
   final double size;
 
   @override
@@ -279,14 +296,14 @@ class _QrBlock extends StatelessWidget {
               padding: EdgeInsets.zero,
               backgroundColor: Colors.white,
               errorCorrectionLevel: QrErrorCorrectLevel.M,
-              semanticsLabel: 'QR code de ma carte de visite',
+              semanticsLabel: 'QR code',
             ),
           ),
           const SizedBox(height: 9),
-          const Text(
-            'SCANNEZ POUR ENREGISTRER\nMON CONTACT',
+          Text(
+            caption,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: kBordeaux,
               fontSize: 10,
               letterSpacing: 2,
@@ -300,13 +317,27 @@ class _QrBlock extends StatelessWidget {
 }
 
 final _compact = ButtonStyle(
-  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 6)),
+  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 4)),
   minimumSize: WidgetStateProperty.all(const Size(0, 46)),
+  textStyle: WidgetStateProperty.all(
+    const TextStyle(
+      fontFamily: 'Montserrat',
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
 );
 
 class _Actions extends StatelessWidget {
-  const _Actions({required this.card, required this.onEdit});
+  const _Actions({
+    required this.card,
+    required this.besoin,
+    required this.onToggleBesoin,
+    required this.onEdit,
+  });
   final CardData card;
+  final bool besoin;
+  final VoidCallback onToggleBesoin;
   final VoidCallback onEdit;
 
   @override
@@ -320,7 +351,15 @@ class _Actions extends StatelessWidget {
             child: const Text('Partager'),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
+        Expanded(
+          child: OutlinedButton(
+            style: _compact,
+            onPressed: onToggleBesoin,
+            child: Text(besoin ? 'Contact' : 'Besoin'),
+          ),
+        ),
+        const SizedBox(width: 6),
         Expanded(
           child: OutlinedButton(
             style: _compact,
@@ -328,7 +367,7 @@ class _Actions extends StatelessWidget {
             child: const Text('NFC'),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
         Expanded(
           child: OutlinedButton(
             style: _compact,
