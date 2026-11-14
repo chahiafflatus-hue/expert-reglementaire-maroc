@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 /// Informations communes à toutes les cartes ACG.
 const kOrg = 'Afflatus Consulting Group';
 const kSlogan = 'The Tech-Enabled Compliance Partner';
-const kSite = 'https://afflatus.consulting';
+const kSite = 'https://afflatusconsulting.com';
 const kContactEmail = 'contact@afflatusconsulting.com';
 const kVille = 'Rabat';
 const kPays = 'Maroc';

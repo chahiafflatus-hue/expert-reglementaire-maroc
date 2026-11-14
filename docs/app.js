@@ -13,7 +13,7 @@
   'use strict';
 
   var ORG = 'Afflatus Consulting Group';
-  var SITE = 'https://afflatus.consulting';
+  var SITE = 'https://afflatusconsulting.com';
   var CONTACT = 'contact@afflatusconsulting.com';
   var BESOIN = 'https://inspirra.tech/p/opportunite/5k_GzuVVqWbJtBlCY5idaXcaCAjeOJSkl7rYPD9xX6E';
   var KEY = 'acg-carte-v1';

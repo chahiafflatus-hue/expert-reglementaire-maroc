@@ -141,7 +141,7 @@ class _Footer extends StatelessWidget {
         runSpacing: 4,
         children: [
           Text(
-            'AFFLATUS.CONSULTING',
+            'AFFLATUSCONSULTING.COM',
             style: TextStyle(
               color: Colors.white,
               fontSize: 10,

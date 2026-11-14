@@ -28,7 +28,7 @@ void main() {
         v,
         contains('EMAIL;TYPE=WORK:chahi.abdellah@afflatusconsulting.com'),
       );
-      expect(v, contains('URL:https://afflatus.consulting'));
+      expect(v, contains('URL:https://afflatusconsulting.com'));
       expect(v, contains('item1.URL:https://inspirra.tech/p/opportunite/'));
       expect(v, endsWith('END:VCARD\r\n'));
     });
