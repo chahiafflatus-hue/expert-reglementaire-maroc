@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8f3247">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Carte ACG">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="assets/icon-192.png">
+<title>Carte de visite ACG</title>
+<style>
+@font-face{font-family:Montserrat;font-weight:500;src:url(assets/montserrat-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Montserrat;font-weight:500;font-style:italic;src:url(assets/montserrat-latin-500-italic.woff2) format("woff2")}
+@font-face{font-family:Montserrat;font-weight:600;src:url(assets/montserrat-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Montserrat;font-weight:700;src:url(assets/montserrat-latin-700-normal.woff2) format("woff2")}
+:root{--b:#8f3247;--g:#545456;--bg:#f6f1f2;--line:#e6d9dc}
+*{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{font:500 14px Montserrat,system-ui,sans-serif;color:var(--g);background:var(--bg);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+.card{max-width:460px;min-height:100%;margin:auto;background:#fff;display:flex;flex-direction:column}
+header{background:var(--b);color:#fff;padding:calc(22px + env(safe-area-inset-top)) 26px 18px}
+header img{display:block;width:176px;height:auto;margin-left:-5px}
+header i{display:block;margin-top:12px;padding-top:11px;font-size:12.5px;position:relative}
+header i:before{content:"";position:absolute;top:0;left:0;width:26px;height:1px;background:#fff9}
+.id{padding:20px 26px 2px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{font-size:24px;line-height:1.15;font-weight:700;color:var(--b);overflow-wrap:anywhere}
+.titre{margin-top:6px;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase}
+.brcgs{width:100px;height:auto;margin-top:6px;flex:none}
+ul{list-style:none;padding:10px 26px 2px}
+li a{display:flex;align-items:center;gap:12px;padding:5px 0;font-size:13.5px;color:inherit;text-decoration:none;overflow-wrap:anywhere}
+li svg{width:17px;height:17px;flex:none;stroke:var(--b);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.qr{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 26px}
+#qr{width:min(58vw,34vh,250px);padding:10px;border-radius:14px;border:1.5px solid var(--line);background:#fff}
+#qr svg{display:block;width:100%}
+.qr p{margin-top:9px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-align:center;color:var(--b)}
+.bar{display:grid;gap:9px;padding:6px 26px 14px}
+.bar.owner{grid-template-columns:1fr 1fr 1fr}
+.bar.guest{grid-template-columns:1fr 1fr}
+.btn{display:block;width:100%;text-align:center;padding:12px 6px;border-radius:10px;border:1.5px solid var(--b);color:var(--b);background:#fff;font:600 13px Montserrat,system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.btn.main{background:var(--b);color:#fff}
+.btn.wide{grid-column:1/-1;padding:14px;font-size:15px}
+.btn:disabled{opacity:.5}
+#install{margin:0 26px 12px;padding:10px 12px;border-radius:10px;background:var(--bg);font-size:12px;line-height:1.45;display:flex;gap:10px;align-items:center;justify-content:space-between}
+#install .btn{width:auto;padding:8px 12px;flex:none}
+footer{background:var(--b);color:#fff;padding:13px 26px calc(13px + env(safe-area-inset-bottom));display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+footer a{color:#fff;text-decoration:none;font-weight:600}
+dialog{border:0;border-radius:16px;padding:22px;width:min(92vw,400px);margin:auto;color:var(--g);font:inherit}
+dialog::backdrop{background:#2a0e15b3}
+dialog h2{font-size:18px;color:var(--b);margin-bottom:6px}
+dialog p{font-size:13px;line-height:1.5;margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 5px}
+input[type=text],input[type=tel],input[type=email]{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:9px;font:500 16px Montserrat,system-ui,sans-serif;color:#222}
+input:focus{outline:2px solid var(--b);outline-offset:1px}
+.row{display:flex;gap:9px;margin-top:18px}
+#lien{width:100%;font:12px ui-monospace,monospace;padding:9px;border:1.5px solid var(--line);border-radius:9px;margin-bottom:10px;color:#222}
+#nfcmsg{font-weight:600;color:var(--b)}
+</style>
+</head>
+<body>
+<div class="card">
+  <header>
+    <img alt="Afflatus Consulting Group" src="assets/logo-blanc.png" width="600" height="193">
+    <i>The Tech-Enabled Compliance Partner</i>
+  </header>
+
+  <div class="id">
+    <div><h1 id="nom"></h1><p class="titre" id="titre"></p></div>
+    <img class="brcgs" id="brcgs" alt="BRCGS Approved Consultant" src="assets/brcgs.png" width="520" height="112" hidden>
+  </div>
+
+  <ul>
+    <li><a id="l-tel"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span></span></a></li>
+    <li><a id="l-email"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span></span></a></li>
+    <li><a id="l-contact"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-7h6v7"/></svg><span></span></a></li>
+  </ul>
+
+  <div class="qr">
+    <div id="qr"></div>
+    <p>Scannez pour enregistrer<br>mon contact</p>
+  </div>
+
+  <!-- Barre du consultant (son propre téléphone) -->
+  <div class="bar owner" id="bar-owner" hidden>
+    <button class="btn main" id="b-share" type="button">Partager</button>
+    <button class="btn" id="b-nfc" type="button">NFC</button>
+    <button class="btn" id="b-edit" type="button">Modifier</button>
+  </div>
+  <div id="install" hidden><span id="install-txt"></span><button class="btn" id="b-install" type="button" hidden>Installer</button></div>
+
+  <!-- Barre de l'interlocuteur (carte reçue par lien ou NFC) -->
+  <div class="bar guest" id="bar-guest" hidden>
+    <a class="btn main wide" id="g-save">Enregistrer le contact</a>
+    <a class="btn" id="g-call">Appeler</a>
+    <a class="btn" id="g-wa" target="_blank" rel="noopener">WhatsApp</a>
+    <a class="btn wide" id="g-besoin" target="_blank" rel="noopener">Exprimez votre besoin</a>
+  </div>
+
+  <footer><a id="site">Afflatus.Consulting</a><span>Rabat · Kénitra · Maroc</span></footer>
+</div>
+
+<dialog id="d-edit">
+  <form id="f-edit" method="dialog">
+    <h2 id="edit-h">Ma carte de visite</h2>
+    <p id="edit-p">Ces informations restent sur votre téléphone. Vous pouvez les modifier à tout moment.</p>
+    <label for="i-p">Prénom</label><input id="i-p" type="text" maxlength="40" autocomplete="given-name" required>
+    <label for="i-n">Nom</label><input id="i-n" type="text" maxlength="40" autocomplete="family-name" required>
+    <label for="i-t">Poste</label><input id="i-t" type="text" maxlength="60" autocomplete="organization-title" required>
+    <label for="i-m">Téléphone</label><input id="i-m" type="tel" maxlength="24" autocomplete="tel" placeholder="+212 6xx xxx xxx" required>
+    <label for="i-e">Email</label><input id="i-e" type="email" maxlength="80" autocomplete="email" required>
+    <div class="row">
+      <button class="btn" id="b-cancel" type="button">Annuler</button>
+      <button class="btn main" type="submit">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="d-nfc">
+  <h2>Carte NFC</h2>
+  <div id="nfc-android">
+    <p>Appuyez sur « Écrire », puis posez la carte ou l'autocollant NFC contre le dos du téléphone.</p>
+    <p id="nfcmsg" role="status"></p>
+  </div>
+  <div id="nfc-other">
+    <p>Ce téléphone ne peut pas écrire une puce NFC depuis l'application. Copiez votre lien, puis écrivez-le sur la puce avec l'application gratuite <b>NFC Tools</b> (Écrire › Ajouter un enregistrement › URL).</p>
+  </div>
+  <input id="lien" readonly aria-label="Lien de ma carte">
+  <div class="row">
+    <button class="btn" id="b-nfc-close" type="button">Fermer</button>
+    <button class="btn" id="b-copy" type="button">Copier le lien</button>
+    <button class="btn main" id="b-write" type="button">Écrire</button>
+  </div>
+</dialog>
+
+<script src="vendor/qrcode.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

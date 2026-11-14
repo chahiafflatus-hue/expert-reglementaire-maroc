@@ -181,3 +181,15 @@ Pour toute question ou assistance technique, contactez l'administrateur système
 **Version** : 1.0  
 **Dernière mise à jour** : Décembre 2025  
 **Technologie** : Python 3.x, Streamlit, Google Gemini AI
+
+## 💳 Carte de visite digitale (dossier `docs/`)
+
+Application web installable (PWA), indépendante de l'application Streamlit : chaque consultant
+l'installe sur son téléphone, y saisit ses coordonnées (modifiables à tout moment) et partage sa
+carte par **QR code** (fiche contact vCard, fonctionne hors connexion) ou par **NFC** (lien écrit
+sur une carte ou un autocollant NFC).
+
+- Aucune donnée personnelle n'est stockée dans ce dépôt ni sur un serveur : la carte reste dans le
+  téléphone du consultant, et le lien partagé la transporte dans son fragment (`#c=…`).
+- Hébergement : GitHub Pages, *Settings › Pages › Deploy from a branch › dossier `/docs`*.
+- Test local : `cd docs && python3 -m http.server 8000`.
