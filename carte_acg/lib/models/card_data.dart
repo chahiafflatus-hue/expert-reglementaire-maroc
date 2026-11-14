@@ -11,6 +11,7 @@ class CardData {
     required this.titre,
     required this.tel,
     required this.email,
+    this.email2 = '',
     this.brcgs = false,
   });
 
@@ -19,6 +20,9 @@ class CardData {
   final String titre;
   final String tel;
   final String email;
+
+  /// Second email, facultatif.
+  final String email2;
 
   /// Affiche le logo « BRCGS Approved Consultant ».
   final bool brcgs;
@@ -32,6 +36,7 @@ class CardData {
     't': titre,
     'm': tel,
     'e': email,
+    if (email2.isNotEmpty) 'e2': email2,
     if (brcgs) 'b': 1,
   };
 
@@ -44,6 +49,7 @@ class CardData {
       titre: f('t'),
       tel: f('m'),
       email: f('e'),
+      email2: f('e2'),
       brcgs: json['b'] == 1 || json['b'] == true,
     );
     return c.prenom.isEmpty || c.nom.isEmpty ? null : c;
@@ -57,7 +63,7 @@ class CardData {
     org: kOrg,
     title: titre,
     phones: [tel],
-    emails: [email, kContactEmail],
+    emails: [email, if (email2.isNotEmpty) email2, kContactEmail],
     website: kSite,
     extraUrl: kBesoinUrl,
     extraUrlLabel: kBesoinLabel,

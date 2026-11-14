@@ -33,6 +33,7 @@
       if (typeof v !== 'string' || !v.trim()) return null;
       out[FIELDS[i]] = v.replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 80);
     }
+    if (typeof o.e2 === 'string' && o.e2.trim()) out.e2 = o.e2.replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 80); // second email, facultatif
     if (o.b) out.b = 1; // badge BRCGS Approved Consultant
     return out;
   }
@@ -72,13 +73,14 @@
       'TITLE:' + esc(o.t),
       'TEL;TYPE=CELL:' + digits(o.m),
       'EMAIL;TYPE=WORK:' + o.e,
+    ].concat(o.e2 ? ['EMAIL:' + o.e2] : [], [
       'EMAIL:' + CONTACT,
       'URL:' + SITE,
       'item1.URL:' + BESOIN,
       'item1.X-ABLabel:Exprimez votre besoin',
       'ADR;TYPE=WORK:;;;Rabat;;;Maroc',
       'END:VCARD', ''
-    ].join('\r\n');
+    ]).join('\r\n');
   }
 
   function link(o) {
@@ -111,6 +113,8 @@
     $('brcgs').hidden = !o.b;
     setLink('l-tel', 'tel:' + tel, o.m);
     setLink('l-email', 'mailto:' + o.e, o.e);
+    $('l-email2').parentNode.hidden = !o.e2;
+    if (o.e2) setLink('l-email2', 'mailto:' + o.e2, o.e2);
     setLink('l-contact', 'mailto:' + CONTACT, CONTACT);
     $('site').href = SITE;
     $('qr').innerHTML = qrSvg(vcard(o)); // SVG construit uniquement à partir de coordonnées numériques
@@ -146,7 +150,7 @@
 
   function openEdit(first) {
     var o = profile || {};
-    FIELDS.forEach(function (f) { $('i-' + f).value = o[f] || ''; });
+    FIELDS.concat('e2').forEach(function (f) { $('i-' + f).value = o[f] || ''; });
     $('edit-h').textContent = first ? 'Créez votre carte de visite' : 'Modifier ma carte';
     $('b-cancel').hidden = first;
     $('d-edit').showModal();
@@ -154,7 +158,7 @@
 
   $('f-edit').addEventListener('submit', function () {
     var o = {};
-    FIELDS.forEach(function (f) { o[f] = $('i-' + f).value; });
+    FIELDS.concat('e2').forEach(function (f) { o[f] = $('i-' + f).value; });
     if (profile && profile.b) o.b = 1;
     o = clean(o);
     if (!o) return;

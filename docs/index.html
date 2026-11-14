@@ -76,6 +76,7 @@ input:focus{outline:2px solid var(--b);outline-offset:1px}
   <ul>
     <li><a id="l-tel"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span></span></a></li>
     <li><a id="l-email"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span></span></a></li>
+    <li hidden><a id="l-email2"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span></span></a></li>
     <li><a id="l-contact"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-7h6v7"/></svg><span></span></a></li>
   </ul>
 
@@ -112,6 +113,7 @@ input:focus{outline:2px solid var(--b);outline-offset:1px}
     <label for="i-t">Poste</label><input id="i-t" type="text" maxlength="60" autocomplete="organization-title" required>
     <label for="i-m">Téléphone</label><input id="i-m" type="tel" maxlength="24" autocomplete="tel" placeholder="+212 6xx xxx xxx" required>
     <label for="i-e">Email</label><input id="i-e" type="email" maxlength="80" autocomplete="email" required>
+    <label for="i-e2">Second email (facultatif)</label><input id="i-e2" type="email" maxlength="80">
     <div class="row">
       <button class="btn" id="b-cancel" type="button">Annuler</button>
       <button class="btn main" type="submit">Enregistrer</button>

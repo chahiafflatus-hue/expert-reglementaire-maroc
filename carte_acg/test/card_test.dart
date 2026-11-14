@@ -57,6 +57,28 @@ void main() {
       expect(CardData.fromJson({'p': 'x'}), isNull);
     });
 
+    test('le second email est facultatif et suit l\'email principal', () {
+      const c = CardData(
+        prenom: 'A',
+        nom: 'B',
+        titre: 'T',
+        tel: '+212600000000',
+        email: 'a@acg.ma',
+        email2: 'a@gmail.com',
+      );
+      expect(
+        c.toVCard(),
+        contains(
+          'EMAIL;TYPE=WORK:a@acg.ma\r\nEMAIL:a@gmail.com\r\nEMAIL:contact@',
+        ),
+      );
+      expect(
+        CardData.fromJson(jsonDecode(jsonEncode(c.toJson())))!.email2,
+        'a@gmail.com',
+      );
+      expect(card.toJson().containsKey('e2'), isFalse);
+    });
+
     test('les caractères spéciaux sont échappés dans la vCard', () {
       final v = buildVCard(fullName: 'Dupont; Jean', org: 'A, B & Co');
       expect(v, contains(r'FN:Dupont\; Jean'));

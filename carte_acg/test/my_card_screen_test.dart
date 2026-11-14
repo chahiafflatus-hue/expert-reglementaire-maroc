@@ -53,6 +53,7 @@ void main() {
       titre: 'Business Analyst',
       tel: '+212 614 617 985',
       email: 'mohammed.elboukhari@afflatus.ma',
+      email2: 'mohammed.elboukhari@gmail.com',
       brcgs: true,
     );
     SharedPreferences.setMockInitialValues({

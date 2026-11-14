@@ -3,6 +3,8 @@ import 'package:material_ui/material_ui.dart';
 import '../models/card_data.dart';
 
 /// Formulaire de création / modification de la carte du consultant.
+final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
 class EditCardScreen extends StatefulWidget {
   const EditCardScreen({super.key, this.initial});
   final CardData? initial;
@@ -18,11 +20,12 @@ class _EditCardScreenState extends State<EditCardScreen> {
   late final _titre = TextEditingController(text: widget.initial?.titre);
   late final _tel = TextEditingController(text: widget.initial?.tel);
   late final _email = TextEditingController(text: widget.initial?.email);
+  late final _email2 = TextEditingController(text: widget.initial?.email2);
   late bool _brcgs = widget.initial?.brcgs ?? false;
 
   @override
   void dispose() {
-    for (final c in [_prenom, _nom, _titre, _tel, _email]) {
+    for (final c in [_prenom, _nom, _titre, _tel, _email, _email2]) {
       c.dispose();
     }
     super.dispose();
@@ -37,6 +40,7 @@ class _EditCardScreenState extends State<EditCardScreen> {
         titre: _titre.text.trim(),
         tel: _tel.text.trim(),
         email: _email.text.trim(),
+        email2: _email2.text.trim(),
         brcgs: _brcgs,
       ),
     );
@@ -97,9 +101,16 @@ class _EditCardScreenState extends State<EditCardScreen> {
               _email,
               'Email',
               type: TextInputType.emailAddress,
+              validator: (v) => _emailPattern.hasMatch(v?.trim() ?? '')
+                  ? null
+                  : 'Email invalide',
+            ),
+            field(
+              _email2,
+              'Second email (facultatif)',
+              type: TextInputType.emailAddress,
               validator: (v) =>
-                  RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                      .hasMatch(v?.trim() ?? '')
+                  (v ?? '').trim().isEmpty || _emailPattern.hasMatch(v!.trim())
                   ? null
                   : 'Email invalide',
             ),

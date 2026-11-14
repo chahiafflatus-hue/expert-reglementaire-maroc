@@ -211,6 +211,12 @@ class _Identity extends StatelessWidget {
           card.email,
           Uri(scheme: 'mailto', path: card.email),
         ),
+        if (card.email2.isNotEmpty)
+          _InfoRow(
+            Icons.mail_outline,
+            card.email2,
+            Uri(scheme: 'mailto', path: card.email2),
+          ),
         _InfoRow(
           Icons.home_outlined,
           kContactEmail,
