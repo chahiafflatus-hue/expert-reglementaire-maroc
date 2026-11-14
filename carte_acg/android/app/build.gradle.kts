@@ -29,6 +29,12 @@ android {
         versionName = flutter.versionName
     }
 
+    // L'analyse lint « vital » du build release plante dans l'outil lui-même (erreur interne
+    // d'un détecteur) et bloque la génération de l'APK ; elle n'est pas nécessaire ici.
+    lint {
+        checkReleaseBuilds = false
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
