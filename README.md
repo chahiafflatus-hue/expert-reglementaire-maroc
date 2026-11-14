@@ -193,3 +193,8 @@ sur une carte ou un autocollant NFC).
   téléphone du consultant, et le lien partagé la transporte dans son fragment (`#c=…`).
 - Hébergement : GitHub Pages, *Settings › Pages › Deploy from a branch › dossier `/docs`*.
 - Test local : `cd docs && python3 -m http.server 8000`.
+
+## 📱 Application mobile « Carte ACG » (dossier `carte_acg/`)
+
+Application Flutter Android / iOS : carte de visite modifiable avec QR code et NFC, scan des cartes
+reçues par OCR et base de contacts locale. Voir [`carte_acg/README.md`](carte_acg/README.md).

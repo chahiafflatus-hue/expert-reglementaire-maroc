@@ -74,6 +74,8 @@
       'EMAIL;TYPE=WORK:' + o.e,
       'EMAIL:' + CONTACT,
       'URL:' + SITE,
+      'item1.URL:' + BESOIN,
+      'item1.X-ABLabel:Exprimez votre besoin',
       'ADR;TYPE=WORK:;;;Rabat;;;Maroc',
       'END:VCARD', ''
     ].join('\r\n');
