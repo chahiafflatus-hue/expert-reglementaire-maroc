@@ -40,6 +40,10 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            // Pas de réduction/obfuscation du code (R8) : elle casse la reconnaissance de texte
+            // ML Kit à l'exécution, et la taille de l'APK n'est pas un enjeu ici.
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

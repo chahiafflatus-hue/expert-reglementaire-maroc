@@ -9,8 +9,11 @@ import '../models/contact.dart';
 import 'card_parser.dart';
 
 class ScanResult {
-  const ScanResult(this.contact, this.rawText);
+  const ScanResult(this.contact, this.rawText, {this.error});
   final Contact contact;
+
+  /// Détail technique si la lecture du texte a échoué (la photo reste enregistrée).
+  final String? error;
 
   /// Texte brut lu sur la carte, affiché pour aider à corriger les champs.
   final String rawText;
@@ -47,6 +50,9 @@ Future<ScanResult?> scanBusinessCard(ImageSource source) async {
         for (final line in block.lines) line.text,
     ].join('\n');
     return ScanResult(parseBusinessCard(text).copyWith(imagePath: saved), text);
+  } catch (e) {
+    // La photo est conservée : l'utilisateur peut remplir la fiche à la main.
+    return ScanResult(Contact(imagePath: saved), '', error: '$e');
   } finally {
     await recognizer.close();
   }

@@ -89,16 +89,16 @@ class _ContactsScreenState extends State<ContactsScreen> {
     try {
       final result = await scanBusinessCard(source);
       if (result == null || !mounted) return;
-      if (result.rawText.trim().isEmpty) {
+      if (result.error != null) {
+        _snack('Lecture automatique impossible : ${result.error}');
+      } else if (result.rawText.trim().isEmpty) {
         _snack(
           'Aucun texte lu sur la photo. Complétez la fiche à la main ou réessayez.',
         );
       }
       await _open(result.contact, rawText: result.rawText);
-    } catch (_) {
-      _snack(
-        'La lecture de la carte a échoué. Réessayez avec une photo plus nette.',
-      );
+    } catch (e) {
+      _snack('Le scan a échoué : $e');
     } finally {
       if (mounted) setState(() => _scanning = false);
     }
