@@ -6,6 +6,7 @@ import 'package:carte_acg/models/vcard.dart';
 import 'package:carte_acg/services/card_parser.dart';
 import 'package:carte_acg/services/nfc_records.dart';
 import 'package:carte_acg/services/share_service.dart';
+import 'package:excel/excel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -135,11 +136,22 @@ Lot 12, Zone Industrielle Ain Sebaa, Casablanca
     });
   });
 
-  test('export CSV : en-tête, séparateur et guillemets', () {
-    final csv = contactsToCsv([
-      const Contact(name: 'A "B" C', company: 'X; Y'),
+  test('export Excel : en-tête et contacts relus depuis le fichier', () {
+    final bytes = contactsToXlsx([
+      const Contact(
+        name: 'Youssef El Amrani',
+        company: 'Atlas Food',
+        phone: '+212661234567',
+      ),
+      const Contact(name: 'Sara Benali', email: 'sara@nutrimar.ma'),
     ]);
-    expect(csv, startsWith('﻿"Nom";"Poste"'));
-    expect(csv, contains('"A ""B"" C";"";"X; Y"'));
+    final sheet = Excel.decodeBytes(bytes)['Contacts'];
+    String cell(int r, int c) => sheet.rows[r][c]?.value.toString() ?? '';
+    expect(sheet.maxRows, 3);
+    expect(cell(0, 0), 'Nom');
+    expect(cell(0, 3), 'Téléphone');
+    expect(cell(1, 0), 'Youssef El Amrani');
+    expect(cell(1, 3), '+212661234567');
+    expect(cell(2, 4), 'sara@nutrimar.ma');
   });
 }

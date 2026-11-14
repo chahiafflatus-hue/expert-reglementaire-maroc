@@ -110,7 +110,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       _snack('Aucun contact à exporter.');
       return;
     }
-    await shareContactsCsv(all);
+    await shareContactsXlsx(all);
   }
 
   @override
@@ -125,7 +125,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
             onPressed: () => _open(const Contact()),
           ),
           IconButton(
-            tooltip: 'Exporter (Excel / CSV)',
+            tooltip: 'Exporter vers Excel',
             icon: const Icon(Icons.file_download_outlined),
             onPressed: _export,
           ),

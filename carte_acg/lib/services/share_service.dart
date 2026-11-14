@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:excel/excel.dart' as xl;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -30,10 +31,11 @@ Future<void> shareVCard(String name, String vcard) async {
   );
 }
 
-String _csvCell(String v) => '"${v.replaceAll('"', '""')}"';
-
-/// Tableau CSV (séparateur « ; », lisible par Excel) de tous les contacts.
-String contactsToCsv(List<Contact> contacts) {
+/// Classeur Excel (.xlsx) de tous les contacts : une ligne par carte enregistrée.
+List<int> contactsToXlsx(List<Contact> contacts) {
+  const sheet = 'Contacts';
+  final book = xl.Excel.createExcel();
+  book.rename(book.getDefaultSheet()!, sheet);
   final rows = <List<String>>[
     [
       'Nom',
@@ -43,7 +45,7 @@ String contactsToCsv(List<Contact> contacts) {
       'Email',
       'Site web',
       'Adresse',
-      'Note',
+      'Note', //
       'Ajouté le',
     ],
     for (final c in contacts)
@@ -59,15 +61,29 @@ String contactsToCsv(List<Contact> contacts) {
         c.createdAt?.toIso8601String().substring(0, 10) ?? '',
       ],
   ];
-  // BOM : Excel reconnaît ainsi l'UTF-8 (accents).
-  return '﻿${rows.map((r) => r.map(_csvCell).join(';')).join('\r\n')}\r\n';
+  for (final row in rows) {
+    // Tout est écrit en texte : Excel ne transforme pas les numéros de téléphone en nombres.
+    book.appendRow(sheet, [for (final v in row) xl.TextCellValue(v)]);
+  }
+  const widths = [26.0, 24.0, 26.0, 18.0, 32.0, 26.0, 36.0, 36.0, 12.0];
+  for (var i = 0; i < widths.length; i++) {
+    book[sheet].setColumnWidth(i, widths[i]);
+  }
+  return book.encode()!;
 }
 
-Future<void> shareContactsCsv(List<Contact> contacts) async {
-  final file = await _tempFile('contacts-acg.csv', contactsToCsv(contacts));
+Future<void> shareContactsXlsx(List<Contact> contacts) async {
+  final dir = await getTemporaryDirectory();
+  final file = await File(p.join(dir.path, 'contacts-acg.xlsx'))
+      .writeAsBytes(contactsToXlsx(contacts));
   await SharePlus.instance.share(
     ShareParams(
-      files: [XFile(file.path, mimeType: 'text/csv')],
+      files: [
+        XFile(
+          file.path,
+          mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ),
+      ],
       subject: 'Contacts ACG',
     ),
   );

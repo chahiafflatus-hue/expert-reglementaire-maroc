@@ -46,6 +46,7 @@ dependencies:
   url_launcher: ^6.3.3
   path_provider: ^2.1.6
   nfc_manager_ndef: ^1.1.0
+  excel: ^4.0.6
 
 dev_dependencies:
   flutter_test:

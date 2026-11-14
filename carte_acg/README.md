@@ -12,7 +12,7 @@ Application Flutter (Android et iOS) de carte de visite digitale pour Afflatus C
 - **Partager** : envoie la fiche contact `.vcf` par WhatsApp, email, etc.
 - **Contacts** : photographier une carte de visite reçue ; le texte est lu par OCR sur l'appareil
   (Google ML Kit), les champs sont préremplis puis vérifiés avant enregistrement dans une base locale
-  (SQLite). Recherche, appel, WhatsApp, email, export CSV pour Excel.
+  (SQLite). Recherche, appel, WhatsApp, email, export de la base en fichier Excel (.xlsx).
 
 Aucune donnée ne quitte le téléphone : pas de serveur, pas de compte.
 
