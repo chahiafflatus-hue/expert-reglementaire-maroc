@@ -1,0 +1,565 @@
+<title>Veille Réglementaire QHSE</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout : coque d'application (barre latérale bureau / onglets mobile) + vues routées par #hash */
+:root{
+  --bg:#f3f6f5; --surface:#ffffff; --surface2:#eef3f2; --ink:#14211f; --muted:#5a6a67; --line:#d8e1df;
+  --accent:#0f6e64; --accent-ink:#ffffff; --accent-soft:#e0f0ed;
+  --ok:#1d7f47; --ok-soft:#e1f3e8; --warn:#9a6212; --warn-soft:#fbf0dc; --bad:#b8352a; --bad-soft:#fbe5e2; --na:#7b8886; --na-soft:#eceff0;
+  --f-display:"Manrope",system-ui,sans-serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1514; --surface:#151f1e; --surface2:#1b2725; --ink:#e4edeb; --muted:#9aaba7; --line:#2a3836;
+  --accent:#3dbfae; --accent-ink:#06201c; --accent-soft:#163430;
+  --ok:#55c486; --ok-soft:#163324; --warn:#e2a74c; --warn-soft:#3a2c14; --bad:#ee6d5e; --bad-soft:#3d1c18; --na:#8d9a98; --na-soft:#232e2d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1514; --surface:#151f1e; --surface2:#1b2725; --ink:#e4edeb; --muted:#9aaba7; --line:#2a3836;
+  --accent:#3dbfae; --accent-ink:#06201c; --accent-soft:#163430;
+  --ok:#55c486; --ok-soft:#163324; --warn:#e2a74c; --warn-soft:#3a2c14; --bad:#ee6d5e; --bad-soft:#3d1c18; --na:#8d9a98; --na-soft:#232e2d; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:1.6rem}h2{font-size:1.15rem}h3{font-size:1rem}
+a{color:var(--accent)}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-size:.82em;letter-spacing:.01em}
+.muted{color:var(--muted)}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100%}
+.side{background:var(--surface);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:10px;align-items:center;padding:0 6px}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:800 .8rem var(--f-display)}
+.brand b{font-family:var(--f-display);display:block;line-height:1.1}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:8px;text-decoration:none;color:var(--ink);font-weight:500}
+.nav a:hover{background:var(--surface2)}
+.nav a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.count{font:600 .72rem var(--f-body);background:var(--bad);color:#fff;border-radius:99px;padding:1px 7px}
+.role{margin-top:auto;display:flex;flex-direction:column;gap:6px}
+.role select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+
+.main{min-width:0;padding-block:22px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.account{display:flex;flex-direction:column;gap:2px}
+.demo{border:1px dashed var(--warn);background:var(--warn-soft);color:var(--ink);border-radius:10px;padding:9px 12px;font-size:.85rem}
+.demo b{color:var(--warn)}
+
+.mobilebar{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mobilebar{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:10px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+  .mobilebar .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .mobilebar select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);max-width:150px}
+  .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 -4px}
+  .tabs a{white-space:nowrap;padding:8px 10px;text-decoration:none;color:var(--muted);font-weight:500;border-bottom:2px solid transparent}
+  .tabs a.on{color:var(--accent);border-bottom-color:var(--accent)}
+}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.grid{display:grid;gap:12px}
+.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi .v{font:800 1.9rem/1.1 var(--f-display);font-variant-numeric:tabular-nums;margin-top:4px}
+.kpi .s{font-size:.82rem;color:var(--muted)}
+.two{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+
+.bar{display:grid;grid-template-columns:118px 1fr 46px;gap:10px;align-items:center;font-size:.9rem}
+.track{height:10px;background:var(--surface2);border-radius:99px;overflow:hidden;display:flex}
+.track i{display:block;height:100%}
+.pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.p-ok{background:var(--ok-soft);color:var(--ok)} .p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-bad{background:var(--bad-soft);color:var(--bad)} .p-na{background:var(--na-soft);color:var(--na)}
+.p-info{background:var(--accent-soft);color:var(--accent)}
+.tag{font-size:.74rem;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+
+.list{display:flex;flex-direction:column}
+.li{display:grid;grid-template-columns:92px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.li:first-child{border-top:0}
+.date{font-variant-numeric:tabular-nums;font-weight:600;font-size:.86rem}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:.88rem}
+th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface2)}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td select{padding:5px 6px;border:1px solid var(--line);border-radius:7px;background:var(--surface)}
+td.mono,td>.mono{white-space:nowrap}
+td input{width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:var(--surface)}
+
+.btn{border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:8px;font-weight:600}
+.btn:hover{background:var(--surface2)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.sm{padding:4px 10px;font-size:.82rem}
+.btn.bad{color:var(--bad)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+.texte{display:flex;flex-direction:column;gap:12px}
+.texte-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.meta{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:.84rem;color:var(--muted)}
+.req{display:grid;grid-template-columns:86px 1fr auto;gap:12px;padding:10px 12px;border-radius:9px;background:var(--surface2);align-items:start}
+.req p{margin:2px 0 0;font-size:.84rem;color:var(--muted)}
+.why{font-size:.82rem;color:var(--accent);margin-top:3px}
+@media (max-width:600px){.req,.li{grid-template-columns:1fr}.req .pill,.li .pill{justify-self:start}}
+
+form.onb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){form.onb{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:12px;padding:14px;margin:0;display:flex;flex-direction:column;gap:9px;background:var(--surface);min-width:0}
+legend{font:700 .95rem var(--f-display);padding:0 6px}
+.chk{display:flex;gap:9px;align-items:flex-start;font-size:.9rem}
+.chk input{margin-top:4px;accent-color:var(--accent)}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:.88rem}
+.fld input,.fld select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);width:100%}
+.result{position:sticky;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 16px}
+.result b{font:800 1.3rem var(--f-display)}
+.result .btn.pri{background:var(--accent);border-color:var(--accent)}
+
+.notif{display:flex;flex-direction:column;gap:12px;border-left:4px solid var(--accent)}
+.notif.unread{background:linear-gradient(0deg,var(--surface),var(--surface)),var(--accent-soft)}
+.notif .ch{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.88rem;background:var(--surface2);padding:10px 12px;border-radius:9px}
+.notif ul{margin:0;padding-left:18px;font-size:.9rem}
+.diff del{color:var(--bad);text-decoration:line-through}
+.diff ins{color:var(--ok);text-decoration:none;font-weight:600}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:.9rem;z-index:20;max-width:calc(100% - 32px)}
+.empty{padding:22px;text-align:center;color:var(--muted)}
+.src{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:10px 0;border-top:1px solid var(--line)}
+.src:first-child{border-top:0}
+@media (prefers-reduced-motion:no-preference){.track i{transition:width .4s ease}}
+</style>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="brand-mark">VR</div><div><b>Veille QHSE</b><span class="muted" style="font-size:.78rem">Maroc · International</span></div></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="role">
+      <label class="label" for="role">Connecté en tant que</label>
+      <select id="role">
+        <option value="client">Client – Resp. QHSE</option>
+        <option value="expert">Expert consultant</option>
+        <option value="admin">Administrateur (base)</option>
+      </select>
+      <button class="btn sm" id="reset" type="button">Réinitialiser la démo</button>
+    </div>
+  </aside>
+  <div style="min-width:0">
+    <div class="mobilebar">
+      <div class="row"><div class="brand"><div class="brand-mark">VR</div><b>Veille QHSE</b></div>
+        <select id="role-m" aria-label="Rôle"><option value="client">Client</option><option value="expert">Expert</option><option value="admin">Admin</option></select></div>
+      <nav class="tabs" id="tabs"></nav>
+    </div>
+    <main class="main"><div class="wrap" id="view"></div></main>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ============ BASE RÉGLEMENTAIRE (alimentée par l'administrateur) ============ */
+const TEXTES = {
+  PPWR:{ref:"Règlement (UE) 2025/40",titre:"Emballages et déchets d'emballages (PPWR)",jur:"UE",dom:"env",type:"Règlement",
+    dates:"JOUE 22/01/2025 · en vigueur 11/02/2025 · application générale 12/08/2026",statut:"En vigueur",
+    source:"https://eur-lex.europa.eu/eli/reg/2025/40/oj",sourceNom:"EUR-Lex",
+    resume:"Remplace la directive 94/62/CE. Fixe des exigences de durabilité (substances, recyclabilité, contenu recyclé, minimisation), d'étiquetage et de conformité pour tout emballage mis sur le marché de l'UE, y compris celui des produits exportés depuis le Maroc."},
+  RSI:{ref:"Décret n° 2-14-499",titre:"Règlement général de construction – sécurité contre les risques d'incendie et de panique dans les constructions",jur:"MA",dom:"sst",type:"Décret",
+    dates:"15/10/2014 · BO n° 6306 du 06/11/2014 · application obligatoire décidée en 2020 (arrêté conjoint)",statut:"En vigueur",
+    source:"https://www.sgg.gov.ma",sourceNom:"SGG – Bulletin officiel",
+    resume:"Règles de prévention incendie par type de bâtiment : classement, dispositions constructives, dégagements, désenfumage, installations techniques et moyens de secours. Les schémas de sécurité incendie sont validés par des bureaux techniques agréés."},
+  CT:{ref:"Loi n° 65-99 (Code du travail)",titre:"Livre II, titre IV – Hygiène et sécurité des salariés",jur:"MA",dom:"sst",type:"Loi",
+    dates:"Dahir n° 1-03-194 du 11/09/2003 · BO n° 5210 du 06/05/2004",statut:"En vigueur",
+    source:"https://www.sgg.gov.ma",sourceNom:"SGG – Bulletin officiel",
+    resume:"Obligations générales de l'employeur en matière de sécurité des locaux et des salariés (art. 281 et s.) et institution des comités de sécurité et d'hygiène (art. 336 et s.)."},
+  A9308:{ref:"Arrêté n° 93-08",titre:"Mesures d'application générales et particulières des articles 281 à 291 du Code du travail",jur:"MA",dom:"sst",type:"Arrêté",
+    dates:"12/05/2008",statut:"En vigueur",
+    source:"https://www.emploi.gov.ma",sourceNom:"Ministère de l'Emploi",
+    resume:"Précise les mesures d'hygiène et de sécurité dans les établissements, dont une rubrique dédiée à la prévention et à la lutte contre l'incendie."}
+};
+const DOM = {sst:"SST",env:"Environnement",qual:"Qualité",food:"Food safety"};
+const JUR = {MA:"🇲🇦 Maroc",UE:"🇪🇺 UE",US:"🇺🇸 USA",CX:"🌍 Codex"};
+
+/* Exigences : chaque texte est découpé en exigences, chacune avec ses critères d'applicabilité */
+const EXIG = [
+ {id:"PPWR-01",t:"PPWR",art:"Art. 5(5)",lib:"Limites PFAS dans les emballages en contact avec les denrées alimentaires",ech:"2026-08-12",
+  ok:p=>p.exportUE&&p.contactAlim, why:"Emballages au contact des conserves, mis sur le marché UE",
+  preuve:"Attestations fournisseurs et rapports d'analyse PFAS par référence d'emballage",
+  action:"Collecter les attestations et rapports PFAS de chaque fournisseur d'emballage ; bloquer les références non documentées"},
+ {id:"PPWR-02",t:"PPWR",art:"Art. 5(4)",lib:"Métaux lourds : somme Pb + Cd + Hg + Cr VI ≤ 100 mg/kg dans l'emballage",ech:"2026-08-12",
+  ok:p=>p.exportUE, why:"Tout emballage mis sur le marché UE",
+  preuve:"Déclarations de conformité fournisseurs (vernis, encres, métal)",
+  action:"Obtenir les déclarations métaux lourds des fournisseurs de boîtes, vernis et encres"},
+ {id:"PPWR-03",t:"PPWR",art:"Art. 39 · Ann. VIII",lib:"Documentation technique et déclaration UE de conformité de l'emballage",ech:"2026-08-12",
+  ok:p=>p.exportUE, why:p=>p.rolePPWR==="fabricant"?"Vous fabriquez l'emballage sous votre nom":"Votre importateur UE vous demandera ces éléments",
+  preuve:"Dossier technique par emballage + déclaration UE de conformité (modèle Annexe VIII)",
+  action:"Constituer le dossier technique par format d'emballage et le transmettre à l'importateur UE"},
+ {id:"PPWR-04",t:"PPWR",art:"Art. 12",lib:"Étiquetage harmonisé de la composition matière pour le tri",ech:"2028-08-12",
+  ok:p=>p.exportUE, why:"Étiquettes des produits vendus dans l'UE",
+  preuve:"Maquettes d'étiquettes validées",
+  action:"Prévoir la refonte des étiquettes dès publication de l'acte d'exécution"},
+ {id:"PPWR-05",t:"PPWR",art:"Art. 6 · Ann. II",lib:"Recyclabilité : conception pour le recyclage et classe de performance",ech:"2030-01-01",
+  ok:p=>p.exportUE, why:"Tout emballage mis sur le marché UE",
+  preuve:"Évaluation de recyclabilité par emballage",
+  action:"Évaluer la recyclabilité de chaque emballage (boîte, couvercle, film, carton)"},
+ {id:"PPWR-06",t:"PPWR",art:"Art. 7",lib:"Contenu recyclé minimal dans la partie plastique des emballages",ech:"2030-01-01",
+  ok:p=>p.exportUE&&p.plastique, why:"Vous utilisez des emballages plastique (film, barquette)",
+  preuve:"Certificats de contenu recyclé fournisseurs",
+  action:"Interroger les fournisseurs de films sur leur feuille de route contenu recyclé"},
+ {id:"PPWR-07",t:"PPWR",art:"Art. 10",lib:"Minimisation du poids et du volume de l'emballage",ech:"2030-01-01",
+  ok:p=>p.exportUE, why:"Tout emballage mis sur le marché UE",
+  preuve:"Justification technique de la minimisation dans le dossier",
+  action:"Revoir le dimensionnement des cartons et suremballages"},
+ {id:"PPWR-08",t:"PPWR",art:"Art. 24",lib:"Ratio d'espace vide ≤ 50 % (emballages groupés, de transport, e-commerce)",ech:"2030-01-01",
+  ok:p=>p.exportUE&&p.groupes, why:"Vous expédiez des cartons et palettes groupés",
+  preuve:"Calcul du ratio d'espace vide par format",
+  action:"Mesurer le ratio d'espace vide des cartons d'expédition"},
+ {id:"PPWR-09",t:"PPWR",art:"Art. 25 · Ann. V",lib:"Formats à usage unique interdits, dont le plastique de regroupement de boîtes et bouteilles (à confirmer sur l'Annexe V)",ech:"2030-01-01",
+  ok:p=>p.exportUE&&p.plastique&&p.groupes, why:"Vous regroupez des boîtes de conserve sous film plastique",
+  preuve:"Inventaire des formats concernés et plan de substitution",
+  action:"Étudier une alternative au film de regroupement (carton, bande papier)"},
+
+ {id:"INC-01",t:"RSI",art:"Schéma SI",lib:"Schéma de sécurité incendie validé par un bureau technique agréé avant autorisation de construire",ech:"projet",
+  ok:p=>p.projet, why:"Vous avez un projet de construction ou d'extension",
+  preuve:"Schéma de sécurité incendie visé + autorisation de construire",
+  action:"Mandater un bureau technique incendie agréé pour le projet d'extension"},
+ {id:"INC-02",t:"RSI",art:"Disp. constructives",lib:"Dégagements, issues de secours et désenfumage adaptés au classement du bâtiment",ech:"permanent",
+  ok:p=>true, why:"Bâtiments construits ou modifiés sous le régime du décret",
+  preuve:"Plans d'évacuation, rapport de vérification du désenfumage",
+  action:"Faire vérifier les dégagements et le désenfumage par un organisme compétent"},
+ {id:"INC-03",t:"A9308",art:"Rubrique incendie",lib:"Moyens d'extinction adaptés aux risques, accessibles, signalés et vérifiés périodiquement",ech:"permanent",
+  ok:p=>true, why:"Tout établissement employant des salariés",
+  preuve:"Registre de vérification des extincteurs et RIA",
+  action:"Mettre à jour le plan d'implantation et le registre de vérification des extincteurs"},
+ {id:"INC-04",t:"A9308",art:"Rubrique incendie",lib:"Consignes incendie affichées, personnel formé, exercices d'évacuation",ech:"permanent",
+  ok:p=>true, why:"Tout établissement employant des salariés",
+  preuve:"Consignes affichées, attestations de formation, PV d'exercice",
+  action:"Organiser un exercice d'évacuation et former les équipiers de première intervention"},
+ {id:"INC-05",t:"A9308",art:"Rubrique incendie",lib:"Stockage des produits inflammables isolé, ventilé et signalé",ech:"permanent",
+  ok:p=>p.inflammables, why:"Vous stockez des produits inflammables (huile, solvants, gaz)",
+  preuve:"Plan de stockage, fiches de données de sécurité",
+  action:"Isoler le stock de solvants et d'huile dans un local dédié et signalé"},
+ {id:"INC-06",t:"CT",art:"Art. 336",lib:"Comité de sécurité et d'hygiène institué et réuni",ech:"permanent",
+  ok:p=>p.effectif>=50, why:p=>`Effectif de ${p.effectif} salariés (seuil : 50)`,
+  preuve:"Acte de constitution du comité, PV de réunions",
+  action:"Planifier les réunions du comité et archiver les PV"},
+];
+
+/* Comptes de démonstration pour l'analyse d'impact */
+const AUTRES_COMPTES = [
+  {nom:"Biscuiterie du Souss",p:{jur:["MA"],dom:["sst","food"],exportUE:false,contactAlim:true,plastique:true,groupes:true,projet:false,inflammables:false,effectif:40}},
+  {nom:"Plastiques Tensift (export UE)",p:{jur:["MA","UE"],dom:["sst","env"],exportUE:true,contactAlim:true,plastique:true,groupes:true,projet:true,inflammables:true,effectif:120}},
+];
+
+/* Mises à jour détectées par les collecteurs (en attente de validation) */
+const MAJ_DETECTEES = [
+  {id:"MAJ-01",t:"PPWR",src:"EUR-Lex (flux RSS)",detecte:"12/11/2026",fictif:true,
+   titre:"Acte d'exécution – spécifications de l'étiquetage harmonisé (art. 12 PPWR)",
+   type:"Précision d'une exigence existante",exig:"PPWR-04",
+   avant:"Étiquetage harmonisé de la composition matière pour le tri",
+   apres:"Étiquetage harmonisé : pictogrammes matière normalisés, format et emplacement fixés par l'acte d'exécution",
+   actions:["Inventorier les étiquettes des références vendues dans l'UE","Briefer l'agence de design sur les nouveaux pictogrammes"]},
+  {id:"MAJ-02",t:"A9308",src:"Ministère de l'Emploi (page actualités)",detecte:"14/11/2026",fictif:true,
+   titre:"Projet de texte – périodicité de vérification des moyens d'extinction",
+   type:"Nouvelle exigence",exig:"INC-07",
+   nouv:{id:"INC-07",t:"A9308",art:"Projet",lib:"Vérification annuelle des moyens d'extinction par un organisme agréé",ech:"2027-06-30",
+     ok:p=>true, why:"Tout établissement employant des salariés",preuve:"Rapport annuel de l'organisme agréé",
+     action:"Contractualiser la vérification annuelle avec un organisme agréé"},
+   actions:["Contractualiser la vérification annuelle avec un organisme agréé"]},
+];
+
+/* ============ ÉTAT ============ */
+const DEFAUT = ()=>({
+  role:"client",
+  profil:{societe:"Conserverie Atlas",site:"Site d'Agadir",activite:"Conserverie de poisson",produits:"Sardines en boîte métal, cartons, film de regroupement",
+    jur:["MA","UE"],dom:["sst","env","qual","food"],exportUE:true,contactAlim:true,plastique:true,groupes:true,rolePPWR:"remplisseur",projet:false,inflammables:true,effectif:180},
+  eval:{"PPWR-01":{s:"partiel",c:"3 fournisseurs sur 5 ont fourni une attestation"},"PPWR-02":{s:"conforme",c:"Déclarations reçues"},
+        "PPWR-03":{s:"nc",c:"Aucun dossier technique constitué"},"INC-03":{s:"conforme",c:"Vérification 03/2026"},
+        "INC-04":{s:"partiel",c:"Pas d'exercice depuis 2024"},"INC-06":{s:"conforme",c:"PV trimestriels"}},
+  actions:[
+    {id:"A-01",ex:"PPWR-03",txt:"Constituer le dossier technique par format d'emballage et le transmettre à l'importateur UE",resp:"Resp. Qualité",ech:"2026-12-15",st:"En cours",val:true},
+    {id:"A-02",ex:"PPWR-01",txt:"Collecter les attestations et rapports PFAS de chaque fournisseur d'emballage ; bloquer les références non documentées",resp:"Achats",ech:"2026-11-10",st:"En cours",val:true},
+    {id:"A-03",ex:"INC-04",txt:"Organiser un exercice d'évacuation et former les équipiers de première intervention",resp:"Resp. HSE",ech:"2027-01-31",st:"À faire",val:false},
+  ],
+  notifs:[{id:"N-0",lu:true,date:"12/08/2026",titre:"Le PPWR entre en application",t:"PPWR",type:"Entrée en application",
+    change:"Les exigences PFAS (art. 5(5)), métaux lourds (art. 5(4)) et la déclaration de conformité (art. 39) sont applicables.",
+    pourquoi:"Vous exportez des produits emballés vers l'UE.",exig:["PPWR-01","PPWR-02","PPWR-03"],actions:["A-01","A-02"]}],
+  majFaites:[], extra:[]
+});
+let S;
+try{S=JSON.parse(localStorage.getItem("vr-demo"))}catch(e){}
+if(!S||!S.profil)S=DEFAUT();
+function save(){try{localStorage.setItem("vr-demo",JSON.stringify(S))}catch(e){}}
+
+/* ============ MOTEUR D'APPLICABILITÉ ============ */
+const allExig=()=>EXIG.concat(S.extra.map(id=>MAJ_DETECTEES.find(m=>m.exig===id).nouv));
+const enPerimetre=(e,p)=>p.jur.includes(TEXTES[e.t].jur)&&p.dom.includes(TEXTES[e.t].dom);
+const applicables=(p=S.profil)=>allExig().filter(e=>enPerimetre(e,p)&&e.ok(p));
+const whyOf=(e,p=S.profil)=>typeof e.why==="function"?e.why(p):e.why;
+const exigById=id=>allExig().find(e=>e.id===id);
+
+const STAT={conforme:["Conforme","p-ok"],partiel:["Partiel","p-warn"],nc:["Non conforme","p-bad"],na:["N/A","p-na"],"":["Non évalué","p-na"]};
+const pill=s=>`<span class="pill ${STAT[s||""][1]}">${STAT[s||""][0]}</span>`;
+const today=new Date();today.setHours(0,0,0,0);
+function fmt(iso){if(!/^\d{4}/.test(iso))return iso==="projet"?"À chaque projet":"Permanent";const[y,m,d]=iso.split("-");return`${d}/${m}/${y}`}
+function echPill(iso){if(!/^\d{4}/.test(iso))return`<span class="pill p-info">${fmt(iso)}</span>`;
+  const d=new Date(iso),j=Math.round((d-today)/864e5);
+  if(j<=0)return`<span class="pill p-ok">Applicable</span>`;
+  const mois=Math.round(j/30.4);return`<span class="pill ${j<365?"p-warn":"p-info"}">Dans ${mois<1?j+" j":mois+" mois"}</span>`}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function stats(){
+  const ap=applicables(),ev=ap.filter(e=>S.eval[e.id]?.s),
+    eff=ev.filter(e=>S.eval[e.id].s!=="na"),conf=eff.filter(e=>S.eval[e.id].s==="conforme").length,
+    part=eff.filter(e=>S.eval[e.id].s==="partiel").length;
+  const textes=[...new Set(ap.map(e=>e.t))];
+  const ouvertes=S.actions.filter(a=>a.st!=="Terminée"),retard=ouvertes.filter(a=>new Date(a.ech)<today);
+  return{ap,ev,eff,conf,part,textes,ouvertes,retard,taux:eff.length?Math.round((conf+part*.5)/eff.length*100):0};
+}
+
+/* ============ NAVIGATION ============ */
+const VUES=[
+  {h:"tableau",n:"Tableau de bord",r:["client","expert","admin"]},
+  {h:"perimetre",n:"Périmètre",r:["client","expert"]},
+  {h:"registre",n:"Textes applicables",r:["client","expert"]},
+  {h:"diagnostic",n:"Diagnostic",r:["client","expert"]},
+  {h:"plan",n:"Plan d'action",r:["client","expert"]},
+  {h:"alertes",n:"Notifications",r:["client","expert"]},
+  {h:"validation",n:"Mises à jour à valider",r:["expert","admin"]},
+  {h:"base",n:"Base & sources",r:["admin"]},
+];
+function badge(h){
+  if(h==="alertes"){const n=S.notifs.filter(x=>!x.lu).length;return n?`<span class="count">${n}</span>`:""}
+  if(h==="validation"){const n=MAJ_DETECTEES.filter(m=>!S.majFaites.includes(m.id)).length;return n?`<span class="count">${n}</span>`:""}
+  if(h==="plan"&&S.role==="expert"){const n=S.actions.filter(a=>!a.val).length;return n?`<span class="count">${n}</span>`:""}
+  return"";
+}
+function route(){
+  const vis=VUES.filter(v=>v.r.includes(S.role));
+  let h=location.hash.slice(1);if(!vis.find(v=>v.h===h))h=vis[0].h;
+  const links=vis.map(v=>`<a href="#${v.h}" class="${v.h===h?"on":""}">${v.n}${badge(v.h)}</a>`).join("");
+  document.getElementById("nav").innerHTML=links;document.getElementById("tabs").innerHTML=links;
+  document.getElementById("role").value=S.role;document.getElementById("role-m").value=S.role;
+  document.getElementById("view").innerHTML=header(h)+VIEWS[h]();
+  bind[h]&&bind[h]();
+}
+function header(h){
+  const v=VUES.find(x=>x.h===h);const p=S.profil;
+  const who=S.role==="admin"?"Administration de la base réglementaire":`${esc(p.societe)} · ${esc(p.site)}`;
+  return`<div class="top"><div class="account"><span class="label">${who}</span><h1>${v.n}</h1></div>
+   <div class="btns">${p.jur.map(j=>`<span class="tag">${JUR[j]}</span>`).join("")}</div></div>
+   <div class="demo"><b>Maquette de démonstration.</b> Les références PPWR et incendie Maroc sont réelles, mais le découpage en exigences est simplifié : vérifiez chaque article sur le texte officiel avant tout usage. Les mises à jour marquées « fictif » servent à tester le circuit de validation.</div>`;
+}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.k);toast.k=setTimeout(()=>t.hidden=true,2600)}
+
+/* ============ VUES ============ */
+const VIEWS={};
+VIEWS.tableau=()=>{
+  if(S.role==="admin")return adminDash();
+  const st=stats();
+  const parDom=Object.keys(DOM).filter(d=>S.profil.dom.includes(d)).map(d=>{
+    const ex=st.ap.filter(e=>TEXTES[e.t].dom===d),ev=ex.filter(e=>S.eval[e.id]?.s&&S.eval[e.id].s!=="na");
+    const c=ev.filter(e=>S.eval[e.id].s==="conforme").length,pa=ev.filter(e=>S.eval[e.id].s==="partiel").length,n=ev.filter(e=>S.eval[e.id].s==="nc").length;
+    const tot=ex.length||1;
+    return`<div class="bar"><span>${DOM[d]}</span><div class="track" title="${c} conformes, ${pa} partielles, ${n} non conformes, ${ex.length-ev.length} non évaluées">
+      <i style="width:${c/tot*100}%;background:var(--ok)"></i><i style="width:${pa/tot*100}%;background:var(--warn)"></i><i style="width:${n/tot*100}%;background:var(--bad)"></i></div>
+      <span class="pct">${ex.length?ev.length+"/"+ex.length:"–"}</span></div>`}).join("");
+  const proch=st.ap.filter(e=>/^\d/.test(e.ech)).sort((a,b)=>a.ech.localeCompare(b.ech)).slice(0,6);
+  const nonLu=S.notifs.filter(n=>!n.lu);
+  return`<div class="grid kpis">
+    <div class="card kpi"><span class="label">Textes applicables</span><div class="v">${st.textes.length}</div><div class="s">${st.ap.length} exigences</div></div>
+    <div class="card kpi"><span class="label">Exigences évaluées</span><div class="v">${st.ev.length}<span class="muted" style="font-size:1rem">/${st.ap.length}</span></div><div class="s">${st.ap.length-st.ev.length} à évaluer</div></div>
+    <div class="card kpi"><span class="label">Taux de conformité</span><div class="v" style="color:${st.taux>=80?"var(--ok)":st.taux>=50?"var(--warn)":"var(--bad)"}">${st.taux} %</div><div class="s">partiel compté à 50 %</div></div>
+    <div class="card kpi"><span class="label">Actions ouvertes</span><div class="v">${st.ouvertes.length}</div><div class="s" style="color:${st.retard.length?"var(--bad)":"var(--muted)"}">${st.retard.length} en retard</div></div>
+  </div>
+  ${nonLu.length?`<a href="#alertes" class="card" style="text-decoration:none;color:inherit;border-color:var(--accent);display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><span><b>${nonLu.length} nouvelle${nonLu.length>1?"s":""} mise${nonLu.length>1?"s":""} à jour réglementaire${nonLu.length>1?"s":""}</b> <span class="muted">· ${esc(nonLu[0].titre)}</span></span><span class="btn sm pri">Voir</span></a>`:""}
+  <div class="grid two">
+    <div class="card" style="display:flex;flex-direction:column;gap:12px"><h2>Conformité par domaine</h2>${parDom||'<p class="muted">Aucun domaine sélectionné.</p>'}
+      <div class="meta"><span><span class="pill p-ok">Conforme</span></span><span><span class="pill p-warn">Partiel</span></span><span><span class="pill p-bad">Non conforme</span></span><span>Gris : non évalué</span></div></div>
+    <div class="card"><h2>Échéances réglementaires</h2><div class="list" style="margin-top:6px">
+      ${proch.map(e=>`<div class="li"><span class="date">${fmt(e.ech)}</span><span><span class="mono muted">${TEXTES[e.t].ref} · ${e.art}</span><br>${esc(e.lib)}</span>${echPill(e.ech)}</div>`).join("")||'<div class="empty">Aucune échéance datée.</div>'}
+    </div></div>
+  </div>`;
+};
+function adminDash(){
+  const nb=allExig().length,att=MAJ_DETECTEES.filter(m=>!S.majFaites.includes(m.id)).length;
+  return`<div class="grid kpis">
+   <div class="card kpi"><span class="label">Textes en base</span><div class="v">${Object.keys(TEXTES).length}</div><div class="s">démo : PPWR + incendie Maroc</div></div>
+   <div class="card kpi"><span class="label">Exigences</span><div class="v">${nb}</div><div class="s">avec critères d'applicabilité</div></div>
+   <div class="card kpi"><span class="label">Sources surveillées</span><div class="v">${SOURCES.length}</div><div class="s">dernière collecte aujourd'hui</div></div>
+   <div class="card kpi"><span class="label">À valider</span><div class="v" style="color:${att?"var(--warn)":"var(--ok)"}">${att}</div><div class="s">mises à jour détectées</div></div></div>
+   <div class="card"><h2>Comptes clients</h2><div class="list" style="margin-top:6px">
+   ${[{nom:S.profil.societe,p:S.profil}].concat(AUTRES_COMPTES).map(c=>`<div class="li"><span class="tag">${c.p.jur.join(" + ")}</span><span><b>${esc(c.nom)}</b><br><span class="muted">${c.p.dom.map(d=>DOM[d]).join(", ")}</span></span><span class="pill p-info">${applicables(c.p).length} exigences</span></div>`).join("")}
+   </div></div>`;
+}
+
+VIEWS.perimetre=()=>{const p=S.profil,ck=(k,l,h)=>`<label class="chk"><input type="checkbox" data-b="${k}" ${p[k]?"checked":""}><span>${l}${h?`<br><span class="muted" style="font-size:.8rem">${h}</span>`:""}</span></label>`;
+  return`<p class="muted" style="margin:0">Questionnaire rempli avec l'expert lors de l'onboarding. Chaque réponse filtre la base : le nombre d'exigences applicables se met à jour en direct.</p>
+  <form class="onb" id="onb">
+   <fieldset><legend>Entreprise</legend>
+    <label class="fld">Raison sociale<input id="f-societe" value="${esc(p.societe)}"></label>
+    <label class="fld">Site<input id="f-site" value="${esc(p.site)}"></label>
+    <label class="fld">Activité<input id="f-activite" value="${esc(p.activite)}"></label>
+    <label class="fld">Produits et emballages<input id="f-produits" value="${esc(p.produits)}"></label>
+    <label class="fld">Effectif du site<input id="f-effectif" type="number" min="1" value="${p.effectif}"></label></fieldset>
+   <fieldset><legend>Domaines de veille</legend>
+    ${Object.entries(DOM).map(([k,v])=>`<label class="chk"><input type="checkbox" data-dom="${k}" ${p.dom.includes(k)?"checked":""}><span>${v}</span></label>`).join("")}
+    <legend style="margin-top:8px">Juridictions</legend>
+    ${Object.entries(JUR).map(([k,v])=>`<label class="chk"><input type="checkbox" data-jur="${k}" ${p.jur.includes(k)?"checked":""}><span>${v}${k==="US"||k==="CX"?' <span class="muted" style="font-size:.8rem">(pas de texte en démo)</span>':""}</span></label>`).join("")}</fieldset>
+   <fieldset><legend>Emballages (PPWR)</legend>
+    ${ck("exportUE","Produits emballés vendus dans l'UE","Export direct ou via importateur")}
+    ${ck("contactAlim","Emballages en contact avec les denrées")}
+    ${ck("plastique","Emballages ou parties en plastique","Films, barquettes, couvercles")}
+    ${ck("groupes","Emballages groupés ou de transport","Cartons, film de regroupement, palettes")}
+    <label class="fld">Rôle vis-à-vis de l'emballage<select id="f-rolePPWR"><option value="remplisseur" ${p.rolePPWR==="remplisseur"?"selected":""}>Remplisseur / exportateur</option><option value="fabricant" ${p.rolePPWR==="fabricant"?"selected":""}>Fabricant d'emballage</option></select></label></fieldset>
+   <fieldset><legend>Risque incendie (Maroc)</legend>
+    ${ck("projet","Projet de construction ou d'extension en cours")}
+    ${ck("inflammables","Stockage de produits inflammables","Huile, solvants, gaz, emballages carton en masse")}</fieldset>
+  </form>
+  <div class="result"><span><b id="nb">${applicables().length}</b> exigences applicables dans <span id="nbt">${new Set(applicables().map(e=>e.t)).size}</span> textes</span>
+   <a class="btn pri" href="#diagnostic">Lancer le diagnostic</a></div>`;
+};
+const bind={};
+bind.perimetre=()=>{const f=document.getElementById("onb");
+  f.addEventListener("input",e=>{const el=e.target,p=S.profil;
+    if(el.dataset.b)p[el.dataset.b]=el.checked;
+    else if(el.dataset.dom){p.dom=el.checked?[...new Set([...p.dom,el.dataset.dom])]:p.dom.filter(x=>x!==el.dataset.dom)}
+    else if(el.dataset.jur){p.jur=el.checked?[...new Set([...p.jur,el.dataset.jur])]:p.jur.filter(x=>x!==el.dataset.jur)}
+    else if(el.id.startsWith("f-")){const k=el.id.slice(2);p[k]=k==="effectif"?(parseInt(el.value)||0):el.value}
+    save();const ap=applicables();document.getElementById("nb").textContent=ap.length;document.getElementById("nbt").textContent=new Set(ap.map(x=>x.t)).size;
+    document.querySelectorAll(".top .btns").forEach(b=>b.innerHTML=p.jur.map(j=>`<span class="tag">${JUR[j]}</span>`).join(""));
+  });
+  f.addEventListener("submit",e=>e.preventDefault());
+};
+
+VIEWS.registre=()=>{const ap=applicables();const ids=[...new Set(ap.map(e=>e.t))];
+  if(!ids.length)return`<div class="card empty">Aucun texte applicable. Élargissez le périmètre.</div>`;
+  return ids.map(t=>{const T=TEXTES[t],ex=ap.filter(e=>e.t===t),ev=ex.filter(e=>S.eval[e.id]?.s&&S.eval[e.id].s!=="na"),
+    c=ev.filter(e=>S.eval[e.id].s==="conforme").length;
+    return`<section class="card texte"><div class="texte-head"><div><span class="mono muted">${T.ref}</span><h2>${T.titre}</h2></div>
+      <div class="btns"><span class="tag">${JUR[T.jur]}</span><span class="tag">${DOM[T.dom]}</span><span class="pill p-ok">${T.statut}</span></div></div>
+      <div class="meta"><span>${T.dates}</span><a href="${T.source}" target="_blank" rel="noopener">Source officielle : ${T.sourceNom} ↗</a></div>
+      <p style="margin:0">${T.resume}</p>
+      <div class="label">${ex.length} exigence${ex.length>1?"s":""} applicable${ex.length>1?"s":""} à votre site · ${c}/${ev.length} conformes</div>
+      ${ex.map(e=>`<div class="req"><span class="mono">${e.art}</span><div><b>${esc(e.lib)}</b><p>Preuve attendue : ${esc(e.preuve)}</p><div class="why">Pourquoi vous : ${esc(whyOf(e))}</div></div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">${pill(S.eval[e.id]?.s)}${echPill(e.ech)}</div></div>`).join("")}
+    </section>`}).join("");
+};
+
+VIEWS.diagnostic=()=>{const ap=applicables();const st=stats();
+  return`<div class="card" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><span><b>${st.ev.length}/${ap.length}</b> exigences évaluées. Un statut « Partiel » ou « Non conforme » propose automatiquement une action.</span><a class="btn" href="#plan">Voir le plan d'action</a></div>
+  <div class="tbl"><table><thead><tr><th>N°</th><th>Texte · article</th><th>Exigence</th><th>Statut</th><th>Constat</th><th>Échéance</th></tr></thead><tbody>
+  ${ap.map(e=>{const v=S.eval[e.id]||{};return`<tr><td class="mono">${e.id}</td><td><span class="mono">${TEXTES[e.t].ref}</span><br><span class="muted">${e.art}</span></td>
+   <td>${esc(e.lib)}<br><span class="muted" style="font-size:.8rem">Preuve : ${esc(e.preuve)}</span></td>
+   <td><select data-ev="${e.id}" aria-label="Statut ${e.id}">${Object.entries(STAT).map(([k,[l]])=>`<option value="${k}" ${(v.s||"")===k?"selected":""}>${l}</option>`).join("")}</select></td>
+   <td><input data-c="${e.id}" value="${esc(v.c||"")}" placeholder="Constat, preuve…" aria-label="Constat ${e.id}"></td><td>${echPill(e.ech)}</td></tr>`}).join("")}
+  </tbody></table></div>`;
+};
+bind.diagnostic=()=>{document.querySelectorAll("[data-ev]").forEach(s=>s.addEventListener("change",()=>{
+  const id=s.dataset.ev;S.eval[id]={...(S.eval[id]||{}),s:s.value};
+  if((s.value==="nc"||s.value==="partiel")&&!S.actions.find(a=>a.ex===id&&a.st!=="Terminée")){
+    const e=exigById(id),n=S.actions.length+1;
+    S.actions.push({id:"A-"+String(n).padStart(2,"0"),ex:id,txt:e.action,resp:"À définir",ech:/^\d/.test(e.ech)&&new Date(e.ech)>today?e.ech:new Date(today.getTime()+90*864e5).toISOString().slice(0,10),st:"Proposée",val:false});
+    toast("Action proposée ajoutée au plan, en attente de validation par l'expert");
+  }save();route();}));
+ document.querySelectorAll("[data-c]").forEach(i=>i.addEventListener("change",()=>{const id=i.dataset.c;S.eval[id]={...(S.eval[id]||{}),c:i.value};save()}));
+};
+
+VIEWS.plan=()=>{const ex=S.role==="expert";
+  if(!S.actions.length)return`<div class="card empty">Aucune action. Évaluez les exigences dans le diagnostic.</div>`;
+  const att=S.actions.filter(a=>!a.val).length;
+  return`<div class="card" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+   <span>${S.actions.length} actions · <b style="color:${att?"var(--warn)":"var(--ok)"}">${att} en attente de validation expert</b></span>
+   ${ex?'<span class="muted">Vous êtes l\'expert : validez, ajustez ou rejetez chaque action proposée.</span>':'<span class="muted">Passez en rôle « Expert » pour valider les actions.</span>'}</div>
+  <div class="tbl"><table><thead><tr><th>N°</th><th>Écart lié</th><th>Action</th><th>Responsable</th><th>Échéance</th><th>Statut</th><th>Validation</th></tr></thead><tbody>
+  ${S.actions.map((a,i)=>{const e=exigById(a.ex),late=a.st!=="Terminée"&&new Date(a.ech)<today;
+   return`<tr><td class="mono">${a.id}</td><td><span class="mono">${a.ex}</span><br><span class="muted" style="font-size:.8rem">${e?TEXTES[e.t].ref:""}</span></td>
+   <td>${esc(a.txt)}</td><td>${ex?`<input data-resp="${i}" value="${esc(a.resp)}" aria-label="Responsable ${a.id}">`:esc(a.resp)}</td>
+   <td><span class="date" style="color:${late?"var(--bad)":"inherit"}">${fmt(a.ech)}</span>${late?'<br><span class="pill p-bad">En retard</span>':""}</td>
+   <td><select data-st="${i}" aria-label="Statut ${a.id}">${["Proposée","À faire","En cours","Terminée"].map(s=>`<option ${a.st===s?"selected":""}>${s}</option>`).join("")}</select></td>
+   <td>${a.val?'<span class="pill p-ok">Validée</span>':ex?`<div class="btns"><button class="btn sm pri" data-val="${i}" type="button">Valider</button><button class="btn sm bad" data-rej="${i}" type="button">Rejeter</button></div>`:'<span class="pill p-warn">En attente</span>'}</td></tr>`}).join("")}
+  </tbody></table></div>`;
+};
+bind.plan=()=>{
+  document.querySelectorAll("[data-val]").forEach(b=>b.addEventListener("click",()=>{const a=S.actions[b.dataset.val];a.val=true;if(a.st==="Proposée")a.st="À faire";save();toast(`${a.id} validée`);route()}));
+  document.querySelectorAll("[data-rej]").forEach(b=>b.addEventListener("click",()=>{const a=S.actions.splice(b.dataset.rej,1)[0];save();toast(`${a.id} rejetée`);route()}));
+  document.querySelectorAll("[data-st]").forEach(s=>s.addEventListener("change",()=>{S.actions[s.dataset.st].st=s.value;save();route()}));
+  document.querySelectorAll("[data-resp]").forEach(s=>s.addEventListener("change",()=>{S.actions[s.dataset.resp].resp=s.value;save()}));
+};
+
+VIEWS.alertes=()=>{if(!S.notifs.length)return`<div class="card empty">Aucune notification.</div>`;
+  return S.notifs.map(n=>{const T=TEXTES[n.t];return`<article class="card notif ${n.lu?"":"unread"}">
+   <div class="texte-head"><div><span class="label">${n.date} · ${n.type}${n.fictif?' · <span style="color:var(--warn)">exemple fictif</span>':""}</span><h2>${esc(n.titre)}</h2></div>${n.lu?"":'<span class="pill p-info">Nouveau</span>'}</div>
+   <div class="ch"><span class="muted">Texte</span><span class="mono">${T.ref}</span><span class="muted">Domaine</span><span>${DOM[T.dom]} · ${JUR[T.jur]}</span><span class="muted">Source</span><a href="${T.source}" target="_blank" rel="noopener">${T.sourceNom} ↗</a></div>
+   <div><div class="label">Ce qui change</div><div class="diff">${n.change}</div></div>
+   <div><div class="label">Pourquoi vous êtes concerné</div>${esc(n.pourquoi)}</div>
+   <div><div class="label">Exigences impactées</div><ul>${n.exig.map(id=>{const e=exigById(id);return e?`<li><span class="mono">${id}</span> ${esc(e.lib)}</li>`:""}).join("")}</ul></div>
+   <div><div class="label">Plan d'action proposé</div><ul>${n.actions.map(id=>{const a=S.actions.find(x=>x.id===id);return a?`<li><span class="mono">${a.id}</span> ${esc(a.txt)} – échéance ${fmt(a.ech)} ${a.val?pill("conforme").replace("Conforme","Validée"):'<span class="pill p-warn">À valider par l\'expert</span>'}</li>`:""}).join("")}</ul></div>
+   <div class="btns">${n.lu?"":`<button class="btn sm" data-lu="${n.id}" type="button">Marquer comme lu</button>`}<a class="btn sm pri" href="#plan">Ouvrir le plan d'action</a></div>
+  </article>`}).join("");
+};
+bind.alertes=()=>document.querySelectorAll("[data-lu]").forEach(b=>b.addEventListener("click",()=>{S.notifs.find(n=>n.id===b.dataset.lu).lu=true;save();route()}));
+
+function impact(m){const comptes=[{nom:S.profil.societe,p:S.profil,moi:true}].concat(AUTRES_COMPTES);
+  return comptes.filter(c=>{const e=m.nouv||exigById(m.exig);return enPerimetre(e,c.p)&&e.ok(c.p)})}
+VIEWS.validation=()=>{const att=MAJ_DETECTEES.filter(m=>!S.majFaites.includes(m.id));
+  const done=MAJ_DETECTEES.filter(m=>S.majFaites.includes(m.id));
+  return`<p class="muted" style="margin:0">Les collecteurs surveillent les sources officielles. Rien n'entre dans la base ni n'est envoyé aux clients sans votre validation.</p>
+  ${att.length?att.map(m=>{const T=TEXTES[m.t],imp=impact(m);return`<article class="card texte">
+   <div class="texte-head"><div><span class="label">Détecté le ${m.detecte} · ${m.src}${m.fictif?' · <span style="color:var(--warn)">exemple fictif</span>':""}</span><h2>${esc(m.titre)}</h2></div><span class="pill p-warn">${m.type}</span></div>
+   <div class="meta"><span class="mono">${T.ref}</span><span>${DOM[T.dom]} · ${JUR[T.jur]}</span></div>
+   <div><div class="label">Pré-analyse IA</div>${m.nouv?`<div class="req"><span class="mono">${m.nouv.id}</span><div><b>${esc(m.nouv.lib)}</b><p>Preuve : ${esc(m.nouv.preuve)}</p></div>${echPill(m.nouv.ech)}</div>`:
+     `<div class="diff req"><span class="mono">${m.exig}</span><div><del>${esc(m.avant)}</del><br><ins>${esc(m.apres)}</ins></div><span></span></div>`}</div>
+   <div><div class="label">Actions proposées aux clients</div><ul style="margin:4px 0 0;padding-left:18px">${m.actions.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>
+   <div><div class="label">Analyse d'impact : ${imp.length} compte${imp.length>1?"s":""} concerné${imp.length>1?"s":""}</div><div class="btns" style="margin-top:4px">${imp.map(c=>`<span class="tag">${esc(c.nom)}</span>`).join("")||'<span class="muted">Aucun</span>'}</div></div>
+   <div class="btns"><button class="btn pri" data-pub="${m.id}" type="button">Valider, publier et notifier</button><button class="btn bad" data-ign="${m.id}" type="button">Rejeter</button></div>
+  </article>`}).join(""):`<div class="card empty">Aucune mise à jour en attente.</div>`}
+  ${done.length?`<div class="card"><h2>Historique</h2><div class="list" style="margin-top:6px">${done.map(m=>`<div class="li"><span class="date">${m.detecte}</span><span>${esc(m.titre)}</span><span class="pill p-ok">Traitée</span></div>`).join("")}</div></div>`:""}`;
+};
+bind.validation=()=>{
+  document.querySelectorAll("[data-pub]").forEach(b=>b.addEventListener("click",()=>{const m=MAJ_DETECTEES.find(x=>x.id===b.dataset.pub);
+    S.majFaites.push(m.id);
+    if(m.nouv)S.extra.push(m.exig);
+    const imp=impact(m),moi=imp.find(c=>c.moi);
+    if(moi){const ids=[];m.actions.forEach(txt=>{const n=S.actions.length+1,id="A-"+String(n).padStart(2,"0");
+        const e=m.nouv||exigById(m.exig);
+        S.actions.push({id,ex:m.exig,txt,resp:"À définir",ech:/^\d/.test(e.ech)?e.ech:new Date(today.getTime()+90*864e5).toISOString().slice(0,10),st:"Proposée",val:false});ids.push(id)});
+      const d=new Date().toLocaleDateString("fr-FR");
+      S.notifs.unshift({id:"N-"+m.id,lu:false,date:d,titre:m.titre,t:m.t,type:m.type,fictif:m.fictif,
+        change:m.nouv?`<ins>Nouvelle exigence : ${esc(m.nouv.lib)}</ins>`:`Avant : <del>${esc(m.avant)}</del><br>Maintenant : <ins>${esc(m.apres)}</ins>`,
+        pourquoi:whyOf(m.nouv||exigById(m.exig)),exig:[m.exig],actions:ids});}
+    save();toast(`Publiée · ${imp.length} compte${imp.length>1?"s":""} notifié${imp.length>1?"s":""}`);route();}));
+  document.querySelectorAll("[data-ign]").forEach(b=>b.addEventListener("click",()=>{S.majFaites.push(b.dataset.ign);save();toast("Mise à jour rejetée");route()}));
+};
+
+const SOURCES=[
+  {n:"EUR-Lex – Journal officiel de l'UE",u:"https://eur-lex.europa.eu",m:"API / flux RSS",j:"UE"},
+  {n:"Commission européenne – PPWR (FAQ, actes d'exécution)",u:"https://environment.ec.europa.eu",m:"Page surveillée",j:"UE"},
+  {n:"SGG – Bulletin officiel du Royaume",u:"https://www.sgg.gov.ma",m:"PDF + OCR (arabe/français)",j:"MA"},
+  {n:"Ministère de l'Emploi",u:"https://www.emploi.gov.ma",m:"Page surveillée",j:"MA"},
+  {n:"Direction générale de la Protection civile",u:"https://www.protectioncivile.ma",m:"Page surveillée",j:"MA"},
+  {n:"ONSSA",u:"https://www.onssa.gov.ma",m:"Page surveillée",j:"MA"},
+];
+VIEWS.base=()=>`<div class="grid two">
+  <div class="card"><h2>Textes en base</h2><div class="list" style="margin-top:6px">${Object.values(TEXTES).map(T=>`<div class="src"><span><span class="mono muted">${T.ref}</span><br>${T.titre}</span><span class="tag">${JUR[T.jur]}</span></div>`).join("")}</div>
+   <button class="btn" type="button" style="margin-top:12px" onclick="toast('Import d\\'une fiche Markdown : prévu dans l\\'application Flutter')">+ Ajouter un texte (fiche .md)</button></div>
+  <div class="card"><h2>Sources officielles surveillées</h2><div class="list" style="margin-top:6px">${SOURCES.map(s=>`<div class="src"><span><b>${s.n}</b><br><a href="${s.u}" target="_blank" rel="noopener" class="mono">${s.u.replace("https://","")}</a></span><span class="tag">${s.m}</span></div>`).join("")}</div></div>
+ </div>`;
+
+/* ============ DÉMARRAGE ============ */
+function setRole(r){S.role=r;save();route()}
+document.getElementById("role").addEventListener("change",e=>setRole(e.target.value));
+document.getElementById("role-m").addEventListener("change",e=>setRole(e.target.value));
+document.getElementById("reset").addEventListener("click",()=>{S=DEFAUT();save();location.hash="tableau";route();toast("Démo réinitialisée")});
+window.addEventListener("hashchange",route);
+route();
+</script>
