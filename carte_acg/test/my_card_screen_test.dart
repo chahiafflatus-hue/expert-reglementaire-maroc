@@ -55,6 +55,7 @@ void main() {
       email: 'mohammed.elboukhari@afflatus.ma',
       email2: 'mohammed.elboukhari@gmail.com',
       brcgs: true,
+      qualifications: ['brcgs', 'ifs', 'fssc', 'irca'],
     );
     SharedPreferences.setMockInitialValues({
       'acg-carte-v1': jsonEncode(card.toJson()),

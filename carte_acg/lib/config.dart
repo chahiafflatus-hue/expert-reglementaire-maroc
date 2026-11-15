@@ -16,6 +16,14 @@ const kBesoinLabel = 'Exprimez votre besoin';
 const kWebCardBase =
     'https://chahiafflatus-hue.github.io/expert-reglementaire-maroc/';
 
+/// Qualifications d'auditeur affichables sur la carte (code enregistré → libellé).
+const kQualifications = {
+  'brcgs': 'BRCGS Approved Auditor',
+  'ifs': 'IFS Approved Auditor',
+  'fssc': 'FSSC Approved Auditor',
+  'irca': 'IRCA ISO Approved Auditor',
+};
+
 const kBordeaux = Color(0xFF8F3247);
 const kGris = Color(0xFF545456);
 const kFond = Color(0xFFF6F1F2);

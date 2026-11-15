@@ -13,6 +13,7 @@ class CardData {
     required this.email,
     this.email2 = '',
     this.brcgs = false,
+    this.qualifications = const [],
   });
 
   final String prenom;
@@ -27,6 +28,15 @@ class CardData {
   /// Affiche le logo « BRCGS Approved Consultant ».
   final bool brcgs;
 
+  /// Codes des qualifications d'auditeur cochées (clés de [kQualifications]).
+  final List<String> qualifications;
+
+  /// Libellés des qualifications, dans l'ordre de [kQualifications].
+  List<String> get qualificationLabels => [
+    for (final e in kQualifications.entries)
+      if (qualifications.contains(e.key)) e.value,
+  ];
+
   String get nomComplet => '$prenom $nom'.trim();
 
   /// Clés courtes : le même format est lu par la page web (`docs/app.js`).
@@ -38,6 +48,7 @@ class CardData {
     'e': email,
     if (email2.isNotEmpty) 'e2': email2,
     if (brcgs) 'b': 1,
+    if (qualifications.isNotEmpty) 'q': qualifications,
   };
 
   static CardData? fromJson(Object? json) {
@@ -51,6 +62,11 @@ class CardData {
       email: f('e'),
       email2: f('e2'),
       brcgs: json['b'] == 1 || json['b'] == true,
+      qualifications: [
+        if (json['q'] is List)
+          for (final q in json['q'] as List)
+            if (kQualifications.containsKey(q)) q as String,
+      ],
     );
     return c.prenom.isEmpty || c.nom.isEmpty ? null : c;
   }
@@ -69,6 +85,10 @@ class CardData {
     extraUrlLabel: kBesoinLabel,
     city: kVille,
     country: kPays,
+    note: [
+      if (brcgs) 'BRCGS Approved Consultant',
+      ...qualificationLabels,
+    ].join(' · '),
   );
 
   /// Lien vers la page web de la carte (pour les puces NFC et le partage par lien).

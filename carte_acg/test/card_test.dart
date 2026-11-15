@@ -79,6 +79,35 @@ void main() {
       expect(card.toJson().containsKey('e2'), isFalse);
     });
 
+    test('les qualifications sont enregistrées et ajoutées à la fiche', () {
+      const c = CardData(
+        prenom: 'A',
+        nom: 'B',
+        titre: 'T',
+        tel: '+212600000000',
+        email: 'a@acg.ma',
+        qualifications: ['irca', 'brcgs'],
+      );
+      expect(c.qualificationLabels, [
+        'BRCGS Approved Auditor',
+        'IRCA ISO Approved Auditor',
+      ]);
+      expect(
+        c.toVCard(),
+        contains('NOTE:BRCGS Approved Auditor · IRCA ISO Approved Auditor'),
+      );
+      final back = CardData.fromJson(jsonDecode(jsonEncode(c.toJson())))!;
+      expect(back.qualifications, ['irca', 'brcgs']);
+      expect(
+        CardData.fromJson({
+          ...c.toJson(),
+          'q': ['inconnu', 'ifs'],
+        })!.qualifications,
+        ['ifs'],
+      );
+      expect(card.toVCard(), isNot(contains('NOTE:')));
+    });
+
     test('les caractères spéciaux sont échappés dans la vCard', () {
       final v = buildVCard(fullName: 'Dupont; Jean', org: 'A, B & Co');
       expect(v, contains(r'FN:Dupont\; Jean'));

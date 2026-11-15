@@ -156,6 +156,26 @@ class _ContactsScreenState extends State<ContactsScreen> {
               ),
             ),
           ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 6, 16, 2),
+            child: Row(
+              children: [
+                Icon(Icons.verified_user_outlined, size: 16, color: kBordeaux),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Afflatus Consulting & CNDP : vos données sont sécurisées '
+                    'et restent sur ce téléphone.',
+                    style: TextStyle(
+                      color: kGris,
+                      fontSize: 11.5,
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(child: _list()),
         ],
       ),

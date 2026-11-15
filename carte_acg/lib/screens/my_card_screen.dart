@@ -75,7 +75,12 @@ class _MyCardScreenState extends State<MyCardScreen> {
                           caption: _besoin
                               ? 'SCANNEZ POUR EXPRIMER\nVOTRE BESOIN'
                               : 'SCANNEZ POUR ENREGISTRER\nMON CONTACT',
-                          size: (box.maxHeight - 360).clamp(170.0, 240.0),
+                          size:
+                              (box.maxHeight -
+                                      360 -
+                                      (card.email2.isEmpty ? 0 : 28) -
+                                      (card.qualifications.isEmpty ? 0 : 58))
+                                  .clamp(170.0, 240.0),
                         ),
                       ),
                       _Actions(
@@ -212,6 +217,36 @@ class _Identity extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
+        if (card.qualifications.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 5,
+              children: [
+                for (final label in card.qualificationLabels)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: kFond,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: kLigne),
+                    ),
+                    child: Text(
+                      label,
+                      style: const TextStyle(
+                        color: kBordeaux,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         const SizedBox(height: 12),
         _InfoRow(
           Icons.phone_outlined,

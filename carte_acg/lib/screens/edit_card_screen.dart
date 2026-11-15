@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../config.dart';
 import '../models/card_data.dart';
 
 /// Formulaire de création / modification de la carte du consultant.
@@ -22,6 +23,7 @@ class _EditCardScreenState extends State<EditCardScreen> {
   late final _email = TextEditingController(text: widget.initial?.email);
   late final _email2 = TextEditingController(text: widget.initial?.email2);
   late bool _brcgs = widget.initial?.brcgs ?? false;
+  late final _qualifications = {...?widget.initial?.qualifications};
 
   @override
   void dispose() {
@@ -42,6 +44,10 @@ class _EditCardScreenState extends State<EditCardScreen> {
         email: _email.text.trim(),
         email2: _email2.text.trim(),
         brcgs: _brcgs,
+        qualifications: [
+          for (final k in kQualifications.keys)
+            if (_qualifications.contains(k)) k,
+        ],
       ),
     );
   }
@@ -121,6 +127,18 @@ class _EditCardScreenState extends State<EditCardScreen> {
               value: _brcgs,
               onChanged: (v) => setState(() => _brcgs = v),
             ),
+            for (final q in kQualifications.entries)
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(q.value),
+                subtitle: const Text('Affiche la mention sur la carte'),
+                value: _qualifications.contains(q.key),
+                onChanged: (v) => setState(
+                  () => v
+                      ? _qualifications.add(q.key)
+                      : _qualifications.remove(q.key),
+                ),
+              ),
             const SizedBox(height: 12),
             FilledButton(onPressed: _save, child: const Text('Enregistrer')),
           ],
