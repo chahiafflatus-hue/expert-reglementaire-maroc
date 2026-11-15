@@ -1,4 +1,4 @@
-<title>Veille Réglementaire QHSE</title>
+<title>VigiLex</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -40,6 +40,8 @@ button{cursor:pointer}
 .brand{display:flex;gap:10px;align-items:center;padding:0 6px}
 .brand-mark{width:34px;height:34px;border-radius:9px;background:var(--orange);color:#fff;display:grid;place-items:center;font:800 .8rem var(--f-display)}
 .brand b{font-family:var(--f-display);display:block;line-height:1.1}
+.logo{font-size:1.2rem;font-weight:800;letter-spacing:-.02em}
+.logo em{font-style:normal;color:var(--orange)}
 .nav{display:flex;flex-direction:column;gap:2px}
 .nav a{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:8px;text-decoration:none;color:rgba(255,255,255,.82);font-weight:500}
 .nav a:hover{background:rgba(255,255,255,.08);color:#fff}
@@ -151,7 +153,7 @@ legend{font:700 .95rem var(--f-display);padding:0 6px}
 
 <div class="app">
   <aside class="side">
-    <div class="brand"><div class="brand-mark">VR</div><div><b>Veille QHSE</b><span class="muted" style="font-size:.78rem">Maroc · International</span></div></div>
+    <div class="brand"><div class="brand-mark">VL</div><div><b class="logo">Vigi<em>Lex</em></b><span class="muted" style="font-size:.76rem;line-height:1.25;display:block">La conformité légale en temps réel</span></div></div>
     <nav class="nav" id="nav"></nav>
     <div class="role">
       <label class="label" for="role">Connecté en tant que</label>
@@ -165,7 +167,7 @@ legend{font:700 .95rem var(--f-display);padding:0 6px}
   </aside>
   <div style="min-width:0">
     <div class="mobilebar">
-      <div class="row"><div class="brand"><div class="brand-mark">VR</div><b>Veille QHSE</b></div>
+      <div class="row"><div class="brand"><div class="brand-mark">VL</div><b class="logo">Vigi<em>Lex</em></b></div>
         <select id="role-m" aria-label="Rôle"><option value="client">Client</option><option value="expert">Expert</option><option value="admin">Admin</option></select></div>
       <nav class="tabs" id="tabs"></nav>
     </div>
