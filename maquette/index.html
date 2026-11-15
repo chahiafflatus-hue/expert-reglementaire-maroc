@@ -146,6 +146,17 @@ legend{font:700 .95rem var(--f-display);padding:0 6px}
 
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:.9rem;z-index:20;max-width:calc(100% - 32px)}
 .empty{padding:22px;text-align:center;color:var(--muted)}
+.chips{display:flex;gap:4px;flex-wrap:wrap}
+.tl .li{grid-template-columns:132px 1fr}
+@media (max-width:600px){.tl .li{grid-template-columns:1fr}}
+.veilles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:760px){.veilles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.veilles a{display:flex;flex-direction:column;gap:2px;padding:12px;border-radius:10px;background:var(--surface2);text-decoration:none;color:var(--ink);border-top:3px solid var(--accent)}
+.veilles a:nth-child(2){border-top-color:var(--brand)} .veilles a:nth-child(3){border-top-color:var(--orange)} .veilles a:nth-child(4){border-top-color:var(--ok)}
+.veilles a:hover{filter:brightness(.97)}
+.veilles b{font:800 1.4rem/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.veilles span{font-size:.8rem;color:var(--muted)}
+.note{font-size:.84rem;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin:0}
 .src{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:10px 0;border-top:1px solid var(--line)}
 .src:first-child{border-top:0}
 @media (prefers-reduced-motion:no-preference){.track i{transition:width .4s ease}}
@@ -198,6 +209,70 @@ const TEXTES = {
 };
 const DOM = {sst:"SST",env:"Environnement",qual:"Qualité",food:"Food safety"};
 const JUR = {MA:"🇲🇦 Maroc",UE:"🇪🇺 UE",US:"🇺🇸 USA",CX:"🌍 Codex"};
+
+/* ---- Veille normative : statut et historique seulement (le texte des normes est protégé par le droit d'auteur) ---- */
+const NORMES = {
+  FSSC:{ref:"FSSC 22000",titre:"Certification des systèmes de management de la sécurité des denrées alimentaires",org:"Fondation FSSC",dom:"food",statut:"En transition V6 → V7",pill:"p-warn",url:"https://www.fssc.com",
+    hist:[["04/2023","Publication de la version 6"],["05/2026","Publication de la version 7 (à confirmer auprès de la Fondation FSSC)"],["30/04/2027","Fin des audits en version 6 (à confirmer)"],["05/2027 – 04/2028","Audits de mise à niveau en version 7 (à confirmer)"]],
+    ecart:"Réaliser l'analyse d'écart V6 → V7 et planifier l'audit de mise à niveau avec l'organisme de certification."},
+  ISO22000:{ref:"ISO 22000:2018",titre:"Systèmes de management de la sécurité des denrées alimentaires",org:"ISO",dom:"food",statut:"En vigueur + Amd 1:2024",pill:"p-ok",url:"https://www.iso.org",
+    hist:[["06/2018","Publication de l'édition 2018"],["02/2024","Amendement 1:2024 « changements climatiques » : ajouts aux § 4.1 et 4.2"]],
+    ecart:"Déterminer si le changement climatique est un enjeu pertinent (§ 4.1) et si des parties intéressées ont des exigences liées (§ 4.2)."},
+  ISO9001:{ref:"ISO 9001:2026",titre:"Systèmes de management de la qualité",org:"ISO",dom:"qual",statut:"Nouvelle édition",pill:"p-warn",url:"https://www.iso.org",
+    hist:[["09/2015","Publication de l'édition 2015"],["02/2024","Amendement 1:2024 « changements climatiques »"],["16/09/2026","Publication de l'édition 2026 (date à vérifier sur iso.org)"],["≈ 09/2029","Fin de la période de transition de 3 ans (à confirmer)"]],
+    ecart:"Analyser les écarts entre l'édition 2015 et l'édition 2026, puis planifier la transition avant l'échéance."},
+  ISO14001:{ref:"ISO 14001:2026",titre:"Systèmes de management environnemental",org:"ISO",dom:"env",statut:"Nouvelle édition",pill:"p-warn",url:"https://www.iso.org",
+    hist:[["09/2015","Publication de l'édition 2015"],["02/2024","Amendement 1:2024 « changements climatiques »"],["15/04/2026","Publication de l'édition 2026"],["≈ 04/2029","Fin de la période de transition de 3 ans"]],
+    ecart:"Analyser les écarts entre l'édition 2015 et l'édition 2026, puis planifier la transition avant avril 2029."},
+  ISO45001:{ref:"ISO 45001:2018",titre:"Systèmes de management de la santé et de la sécurité au travail",org:"ISO",dom:"sst",statut:"En vigueur + Amd 1:2024",pill:"p-ok",url:"https://www.iso.org",
+    hist:[["03/2018","Publication de l'édition 2018"],["02/2024","Amendement 1:2024 « changements climatiques »"],["En cours","Révision de la norme en préparation (calendrier à vérifier)"]],
+    ecart:"Intégrer l'enjeu climatique dans l'analyse du contexte. Suivre l'avancement de la révision."},
+  BRCGS:{ref:"BRCGS Food Safety – Issue 9",titre:"Norme mondiale de sécurité des denrées alimentaires",org:"BRCGS",dom:"food",statut:"En vigueur",pill:"p-ok",url:"https://www.brcgs.com",
+    hist:[["01/08/2022","Publication de l'Issue 9"],["En cours","Issue 10 en développement, pas de date de publication annoncée"]],
+    ecart:"Aucune action immédiate. Suivre la consultation et la publication de l'Issue 10."},
+  IFS:{ref:"IFS Food – version 8",titre:"Référentiel d'audit de la qualité et de la sécurité des produits alimentaires",org:"IFS",dom:"food",statut:"En vigueur",pill:"p-ok",url:"https://www.ifs-certification.com",
+    hist:[["01/01/2024","Version 8 obligatoire pour tous les audits"]],
+    ecart:"Aucune action immédiate."},
+};
+
+/* ---- Produits, bibliothèque scientifique, guides et base HACCP ---- */
+const PRODUITS = {sardine:{nom:"Sardines en conserve (appertisées)"},olive:{nom:"Huile d'olive vierge extra"},biscuit:{nom:"Biscuits secs"}};
+const BIBLIO = [
+  {id:"S1",cat:"sci",type:"Rapport d'experts",org:"FAO / OMS",an:"2013",titre:"Réunion conjointe d'experts sur les risques pour la santé publique liés à l'histamine et aux autres amines biogènes du poisson et des produits de la pêche",url:"https://www.fao.org",dangers:["histamine"],prod:["sardine"]},
+  {id:"S2",cat:"sci",type:"Avis scientifique",org:"EFSA",an:"2023",titre:"Réévaluation des risques pour la santé publique liés à la présence de bisphénol A (BPA) dans les denrées alimentaires",url:"https://www.efsa.europa.eu",dangers:["bpa"],prod:["sardine"]},
+  {id:"S3",cat:"sci",type:"Avis scientifique",org:"EFSA",an:"2005",titre:"Avis du groupe BIOHAZ relatif à Clostridium spp. dans les denrées alimentaires",url:"https://www.efsa.europa.eu",dangers:["botulinum"],prod:["sardine"]},
+  {id:"S4",cat:"sci",type:"Alertes",org:"RASFF",an:"continu",titre:"Système d'alerte rapide pour les denrées alimentaires et les aliments pour animaux : notifications sur les produits de la pêche",url:"https://webgate.ec.europa.eu/rasff-window",dangers:["histamine","metaux"],prod:["sardine"]},
+  {id:"G1",cat:"guide",type:"Code d'usages",org:"Codex",an:"CXC 52-2003",titre:"Code d'usages pour les poissons et les produits de la pêche",url:"https://www.fao.org/fao-who-codexalimentarius",dangers:["histamine","corps"],prod:["sardine"]},
+  {id:"G2",cat:"guide",type:"Code d'usages",org:"Codex",an:"CXC 23-1979",titre:"Code d'usages en matière d'hygiène pour les conserves non acidifiées ou acidifiées de produits alimentaires naturellement peu acides",url:"https://www.fao.org/fao-who-codexalimentarius",dangers:["botulinum","serti"],prod:["sardine"]},
+  {id:"G3",cat:"guide",type:"Norme produit",org:"Codex",an:"CXS 94-1981",titre:"Norme pour les sardines et produits du type sardines en conserve",url:"https://www.fao.org/fao-who-codexalimentarius",dangers:["histamine"],prod:["sardine"]},
+  {id:"G4",cat:"guide",type:"Guide technique",org:"FAO",an:"2014",titre:"Assessment and management of seafood safety and quality (document technique n° 574)",url:"https://www.fao.org",dangers:["histamine","botulinum","metaux"],prod:["sardine"]},
+];
+const DANGERS = {sardine:[
+  {id:"histamine",nom:"Histamine",type:"Chimique",etape:"Réception, décongélation, attente",
+   limite:"Règl. (CE) 2073/2005 : n = 9, c = 2, m = 100 mg/kg, M = 200 mg/kg. Codex CXS 94 : 10 mg/100 g en moyenne, 20 mg/100 g par unité.",
+   reg:["Règl. (CE) 2073/2005","Loi 28-07 et textes ONSSA (à compléter)"],maitrise:"Chaîne du froid, dosage de l'histamine à la réception",niveau:"CCP probable"},
+  {id:"botulinum",nom:"Clostridium botulinum",type:"Biologique",etape:"Stérilisation",
+   limite:"Barème de stérilisation validé, valeur stérilisatrice F0 ≥ 3 min (à valider par étude de pénétration de chaleur).",
+   reg:["Règl. (CE) 852/2004"],maitrise:"Barème temps/température, enregistrement de chaque cycle",niveau:"CCP"},
+  {id:"serti",nom:"Recontamination après stérilisation",type:"Biologique",etape:"Sertissage, refroidissement",
+   limite:"Paramètres de serti conformes aux tolérances du fabricant de boîtes. Eau de refroidissement désinfectée.",
+   reg:["Règl. (CE) 852/2004"],maitrise:"Contrôle du serti, chloration de l'eau de refroidissement",niveau:"CCP ou PRPo"},
+  {id:"metaux",nom:"Métaux lourds (Pb, Cd, Hg)",type:"Chimique",etape:"Matière première",
+   limite:"Règl. (UE) 2023/915, annexe I : teneurs maximales par espèce (valeurs à reporter).",
+   reg:["Règl. (UE) 2023/915"],maitrise:"Zones de pêche, plan de surveillance analytique",niveau:"PRP"},
+  {id:"etain",nom:"Étain inorganique",type:"Chimique",etape:"Emballage métallique",
+   limite:"Règl. (UE) 2023/915 : 200 mg/kg dans les denrées en conserve.",
+   reg:["Règl. (UE) 2023/915"],maitrise:"Vernis intérieur, cahier des charges des boîtes",niveau:"PRP"},
+  {id:"bpa",nom:"Bisphénol A (migration du vernis)",type:"Chimique",etape:"Emballage métallique",
+   limite:"Règl. (UE) 2024/3190 : interdiction du BPA dans les matériaux au contact des denrées, avec périodes transitoires.",
+   reg:["Règl. (UE) 2024/3190"],maitrise:"Attestation fournisseur, vernis sans BPA",niveau:"PRP"},
+  {id:"allergene",nom:"Allergène poisson",type:"Allergène",etape:"Étiquetage",
+   limite:"Règl. (UE) 1169/2011, annexe II : mention obligatoire et mise en évidence.",
+   reg:["Règl. (UE) 1169/2011"],maitrise:"Validation des étiquettes, contrôle au changement de série",niveau:"PRPo"},
+  {id:"corps",nom:"Corps étrangers (arêtes, métal)",type:"Physique",etape:"Parage, emboîtage",
+   limite:"Absence de corps étranger dangereux.",
+   reg:[],maitrise:"Contrôle visuel, détection en ligne",niveau:"PRP"},
+]};
 
 /* Exigences : chaque texte est découpé en exigences, chacune avec ses critères d'applicabilité */
 const EXIG = [
@@ -266,8 +341,8 @@ const EXIG = [
 
 /* Comptes de démonstration pour l'analyse d'impact */
 const AUTRES_COMPTES = [
-  {nom:"Biscuiterie du Souss",p:{jur:["MA"],dom:["sst","food"],exportUE:false,contactAlim:true,plastique:true,groupes:true,projet:false,inflammables:false,effectif:40}},
-  {nom:"Plastiques Tensift (export UE)",p:{jur:["MA","UE"],dom:["sst","env"],exportUE:true,contactAlim:true,plastique:true,groupes:true,projet:true,inflammables:true,effectif:120}},
+  {nom:"Biscuiterie du Souss",p:{jur:["MA"],dom:["sst","food"],exportUE:false,contactAlim:true,plastique:true,groupes:true,projet:false,inflammables:false,effectif:40,normes:["FSSC","ISO22000"],produits:["biscuit"]}},
+  {nom:"Plastiques Tensift (export UE)",p:{jur:["MA","UE"],dom:["sst","env"],exportUE:true,contactAlim:true,plastique:true,groupes:true,projet:true,inflammables:true,effectif:120,normes:["ISO9001","ISO14001"],produits:[]}},
 ];
 
 /* Mises à jour détectées par les collecteurs (en attente de validation) */
@@ -285,13 +360,27 @@ const MAJ_DETECTEES = [
      ok:p=>true, why:"Tout établissement employant des salariés",preuve:"Rapport annuel de l'organisme agréé",
      action:"Contractualiser la vérification annuelle avec un organisme agréé"},
    actions:["Contractualiser la vérification annuelle avec un organisme agréé"]},
+  {id:"MAJ-03",kind:"norme",norme:"FSSC",src:"Fondation FSSC (page surveillée)",url:"https://www.fssc.com",detecte:"13/11/2026",fictif:true,
+   titre:"FSSC 22000 version 7 – guide de transition et exigences additionnelles modifiées",type:"Révision de référentiel",
+   resume:"La version 7 modifie plusieurs exigences additionnelles du référentiel.",
+   detail:"Les audits de mise à niveau sont à planifier avec l'organisme de certification pendant la période de transition.",
+   pourquoi:"FSSC 22000 fait partie des référentiels de votre périmètre.",
+   impacts:["Système de management FSSC 22000 : analyse d'écart V6 → V7","Programme d'audit interne"],ech:"2027-04-30",
+   actions:["Réaliser l'analyse d'écart FSSC 22000 V6 → V7","Planifier l'audit de mise à niveau avec l'organisme de certification"]},
+  {id:"MAJ-04",kind:"science",produit:"sardine",danger:"histamine",src:"EFSA Journal (flux RSS)",url:"https://www.efsa.europa.eu",detecte:"14/11/2026",fictif:true,
+   titre:"Nouvel avis scientifique sur l'histamine dans les produits de la pêche",type:"Avis scientifique",
+   resume:"L'avis réévalue la formation d'histamine pendant la décongélation et l'attente avant traitement.",
+   detail:"Il recommande de documenter le couple temps/température à ces étapes.",
+   pourquoi:"Les sardines en conserve font partie de vos produits, et l'histamine est un danger retenu dans votre analyse.",
+   impacts:["Analyse des dangers : histamine (réception, décongélation)","Limite critique et surveillance à la réception"],ech:"2027-02-28",
+   actions:["Revoir l'analyse du danger histamine à la lumière du nouvel avis","Vérifier les limites temps/température à la décongélation"]},
 ];
 
 /* ============ ÉTAT ============ */
 const DEFAUT = ()=>({
   role:"client",
   profil:{societe:"Conserverie Atlas",site:"Site d'Agadir",activite:"Conserverie de poisson",produits:"Sardines en boîte métal, cartons, film de regroupement",
-    jur:["MA","UE"],dom:["sst","env","qual","food"],exportUE:true,contactAlim:true,plastique:true,groupes:true,rolePPWR:"remplisseur",projet:false,inflammables:true,effectif:180},
+    jur:["MA","UE"],dom:["sst","env","qual","food"],exportUE:true,contactAlim:true,plastique:true,groupes:true,rolePPWR:"remplisseur",projet:false,inflammables:true,effectif:180,normes:["FSSC","ISO14001","ISO45001"],produits:["sardine"]},
   eval:{"PPWR-01":{s:"partiel",c:"3 fournisseurs sur 5 ont fourni une attestation"},"PPWR-02":{s:"conforme",c:"Déclarations reçues"},
         "PPWR-03":{s:"nc",c:"Aucun dossier technique constitué"},"INC-03":{s:"conforme",c:"Vérification 03/2026"},
         "INC-04":{s:"partiel",c:"Pas d'exercice depuis 2024"},"INC-06":{s:"conforme",c:"PV trimestriels"}},
@@ -299,15 +388,20 @@ const DEFAUT = ()=>({
     {id:"A-01",ex:"PPWR-03",txt:"Constituer le dossier technique par format d'emballage et le transmettre à l'importateur UE",resp:"Resp. Qualité",ech:"2026-12-15",st:"En cours",val:true},
     {id:"A-02",ex:"PPWR-01",txt:"Collecter les attestations et rapports PFAS de chaque fournisseur d'emballage ; bloquer les références non documentées",resp:"Achats",ech:"2026-11-10",st:"En cours",val:true},
     {id:"A-03",ex:"INC-04",txt:"Organiser un exercice d'évacuation et former les équipiers de première intervention",resp:"Resp. HSE",ech:"2027-01-31",st:"À faire",val:false},
+    {id:"A-04",ex:"ISO 14001",txt:"Réaliser l'analyse d'écart ISO 14001:2015 → 2026 et planifier la transition",resp:"Resp. HSE",ech:"2027-06-30",st:"À faire",val:true},
   ],
-  notifs:[{id:"N-0",lu:true,date:"12/08/2026",titre:"Le PPWR entre en application",t:"PPWR",type:"Entrée en application",
+  notifs:[{id:"N-1",lu:true,date:"15/04/2026",titre:"ISO 14001:2026 est publiée",kind:"norme",type:"Nouvelle édition de norme",
+    ref:"ISO 14001:2026",domLabel:"Environnement · ISO",srcNom:"ISO",srcUrl:"https://www.iso.org",
+    change:"La nouvelle édition remplace ISO 14001:2015. Une période de transition de 3 ans court jusqu'en avril 2029.",
+    pourquoi:"ISO 14001 fait partie des référentiels de votre périmètre.",impacts:["Système de management environnemental : analyse d'écart 2015 → 2026"],actions:["A-04"]},
+   {id:"N-0",lu:true,date:"12/08/2026",titre:"Le PPWR entre en application",t:"PPWR",type:"Entrée en application",
     change:"Les exigences PFAS (art. 5(5)), métaux lourds (art. 5(4)) et la déclaration de conformité (art. 39) sont applicables.",
     pourquoi:"Vous exportez des produits emballés vers l'UE.",exig:["PPWR-01","PPWR-02","PPWR-03"],actions:["A-01","A-02"]}],
-  majFaites:[], extra:[]
+  majFaites:[], extra:[], haccpRevoir:[], normeMaj:[]
 });
 let S;
 try{S=JSON.parse(localStorage.getItem("vr-demo"))}catch(e){}
-if(!S||!S.profil)S=DEFAUT();
+if(!S||!S.profil||!S.profil.produits||!S.normeMaj)S=DEFAUT();
 function save(){try{localStorage.setItem("vr-demo",JSON.stringify(S))}catch(e){}}
 
 /* ============ MOTEUR D'APPLICABILITÉ ============ */
@@ -341,6 +435,9 @@ const VUES=[
   {h:"tableau",n:"Tableau de bord",r:["client","expert","admin"]},
   {h:"perimetre",n:"Périmètre",r:["client","expert"]},
   {h:"registre",n:"Textes applicables",r:["client","expert"]},
+  {h:"normes",n:"Normes",r:["client","expert"]},
+  {h:"science",n:"Science & guides",r:["client","expert"]},
+  {h:"haccp",n:"Base HACCP",r:["client","expert"]},
   {h:"diagnostic",n:"Diagnostic",r:["client","expert"]},
   {h:"plan",n:"Plan d'action",r:["client","expert"]},
   {h:"alertes",n:"Notifications",r:["client","expert"]},
@@ -367,7 +464,7 @@ function header(h){
   const who=S.role==="admin"?"Administration de la base réglementaire":`${esc(p.societe)} · ${esc(p.site)}`;
   return`<div class="top"><div class="account"><span class="label">${who}</span><h1>${v.n}</h1></div>
    <div class="btns">${p.jur.map(j=>`<span class="tag">${JUR[j]}</span>`).join("")}</div></div>
-   <div class="demo"><b>Maquette de démonstration.</b> Les références PPWR et incendie Maroc sont réelles, mais le découpage en exigences est simplifié : vérifiez chaque article sur le texte officiel avant tout usage. Les mises à jour marquées « fictif » servent à tester le circuit de validation.</div>`;
+   <div class="demo"><b>Maquette de démonstration.</b> Les textes, normes et publications cités existent, mais leur contenu est résumé et simplifié : vérifiez chaque référence, date et limite sur la source officielle avant tout usage. Les mises à jour marquées « fictif » servent à tester le circuit de validation.</div>`;
 }
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.k);toast.k=setTimeout(()=>t.hidden=true,2600)}
 
@@ -391,6 +488,12 @@ VIEWS.tableau=()=>{
     <div class="card kpi"><span class="label">Taux de conformité</span><div class="v" style="color:${st.taux>=80?"var(--ok)":st.taux>=50?"var(--warn)":"var(--bad)"}">${st.taux} %</div><div class="s">partiel compté à 50 %</div></div>
     <div class="card kpi"><span class="label">Actions ouvertes</span><div class="v">${st.ouvertes.length}</div><div class="s" style="color:${st.retard.length?"var(--bad)":"var(--muted)"}">${st.retard.length} en retard</div></div>
   </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:10px"><h2>Vos 4 veilles</h2><div class="veilles">
+    <a href="#registre"><span class="label">Réglementaire</span><b>${st.textes.length}</b><span>textes · ${st.ap.length} exigences</span></a>
+    <a href="#normes"><span class="label">Normative</span><b>${S.profil.normes.length}</b><span>normes et référentiels suivis</span></a>
+    <a href="#science"><span class="label">Scientifique</span><b>${biblioDe("sci").length}</b><span>avis, rapports et alertes</span></a>
+    <a href="#science"><span class="label">Guides</span><b>${biblioDe("guide").length}</b><span>guides et codes d'usages</span></a>
+  </div></div>
   ${nonLu.length?`<a href="#alertes" class="card" style="text-decoration:none;color:inherit;border-color:var(--accent);display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><span><b>${nonLu.length} nouvelle${nonLu.length>1?"s":""} mise${nonLu.length>1?"s":""} à jour réglementaire${nonLu.length>1?"s":""}</b> <span class="muted">· ${esc(nonLu[0].titre)}</span></span><span class="btn sm pri">Voir</span></a>`:""}
   <div class="grid two">
     <div class="card" style="display:flex;flex-direction:column;gap:12px"><h2>Conformité par domaine</h2>${parDom||'<p class="muted">Aucun domaine sélectionné.</p>'}
@@ -403,7 +506,7 @@ VIEWS.tableau=()=>{
 function adminDash(){
   const nb=allExig().length,att=MAJ_DETECTEES.filter(m=>!S.majFaites.includes(m.id)).length;
   return`<div class="grid kpis">
-   <div class="card kpi"><span class="label">Textes en base</span><div class="v">${Object.keys(TEXTES).length}</div><div class="s">démo : PPWR + incendie Maroc</div></div>
+   <div class="card kpi"><span class="label">Textes en base</span><div class="v">${Object.keys(TEXTES).length}</div><div class="s">+ ${Object.keys(NORMES).length} normes, ${BIBLIO.length} documents</div></div>
    <div class="card kpi"><span class="label">Exigences</span><div class="v">${nb}</div><div class="s">avec critères d'applicabilité</div></div>
    <div class="card kpi"><span class="label">Sources surveillées</span><div class="v">${SOURCES.length}</div><div class="s">dernière collecte aujourd'hui</div></div>
    <div class="card kpi"><span class="label">À valider</span><div class="v" style="color:${att?"var(--warn)":"var(--ok)"}">${att}</div><div class="s">mises à jour détectées</div></div></div>
@@ -434,8 +537,12 @@ VIEWS.perimetre=()=>{const p=S.profil,ck=(k,l,h)=>`<label class="chk"><input typ
    <fieldset><legend>Risque incendie (Maroc)</legend>
     ${ck("projet","Projet de construction ou d'extension en cours")}
     ${ck("inflammables","Stockage de produits inflammables","Huile, solvants, gaz, emballages carton en masse")}</fieldset>
+   <fieldset><legend>Normes et référentiels (veille normative)</legend>
+    ${Object.entries(NORMES).map(([k,N])=>`<label class="chk"><input type="checkbox" data-norme="${k}" ${p.normes.includes(k)?"checked":""}><span>${N.ref}<br><span class="muted" style="font-size:.8rem">${N.statut}</span></span></label>`).join("")}</fieldset>
+   <fieldset><legend>Produits (veille scientifique et base HACCP)</legend>
+    ${Object.entries(PRODUITS).map(([k,P])=>`<label class="chk"><input type="checkbox" data-prod="${k}" ${p.produits.includes(k)?"checked":""}><span>${P.nom}${DANGERS[k]?"":'<br><span class="muted" style="font-size:.8rem">Fiche à préparer par l\'expert (pas de données en démo)</span>'}</span></label>`).join("")}</fieldset>
   </form>
-  <div class="result"><span><b id="nb">${applicables().length}</b> exigences applicables dans <span id="nbt">${new Set(applicables().map(e=>e.t)).size}</span> textes</span>
+  <div class="result"><span><b id="nb">${applicables().length}</b> exigences applicables dans <span id="nbt">${new Set(applicables().map(e=>e.t)).size}</span> textes · <span id="nbn">${p.normes.length}</span> normes · <span id="nbp">${p.produits.length}</span> produits</span>
    <a class="btn pri" href="#diagnostic">Lancer le diagnostic</a></div>`;
 };
 const bind={};
@@ -444,8 +551,10 @@ bind.perimetre=()=>{const f=document.getElementById("onb");
     if(el.dataset.b)p[el.dataset.b]=el.checked;
     else if(el.dataset.dom){p.dom=el.checked?[...new Set([...p.dom,el.dataset.dom])]:p.dom.filter(x=>x!==el.dataset.dom)}
     else if(el.dataset.jur){p.jur=el.checked?[...new Set([...p.jur,el.dataset.jur])]:p.jur.filter(x=>x!==el.dataset.jur)}
+    else if(el.dataset.norme){p.normes=el.checked?[...new Set([...p.normes,el.dataset.norme])]:p.normes.filter(x=>x!==el.dataset.norme)}
+    else if(el.dataset.prod){p.produits=el.checked?[...new Set([...p.produits,el.dataset.prod])]:p.produits.filter(x=>x!==el.dataset.prod)}
     else if(el.id.startsWith("f-")){const k=el.id.slice(2);p[k]=k==="effectif"?(parseInt(el.value)||0):el.value}
-    save();const ap=applicables();document.getElementById("nb").textContent=ap.length;document.getElementById("nbt").textContent=new Set(ap.map(x=>x.t)).size;
+    save();const ap=applicables();document.getElementById("nb").textContent=ap.length;document.getElementById("nbt").textContent=new Set(ap.map(x=>x.t)).size;document.getElementById("nbn").textContent=p.normes.length;document.getElementById("nbp").textContent=p.produits.length;
     document.querySelectorAll(".top .btns").forEach(b=>b.innerHTML=p.jur.map(j=>`<span class="tag">${JUR[j]}</span>`).join(""));
   });
   f.addEventListener("submit",e=>e.preventDefault());
@@ -506,29 +615,45 @@ bind.plan=()=>{
   document.querySelectorAll("[data-resp]").forEach(s=>s.addEventListener("change",()=>{S.actions[s.dataset.resp].resp=s.value;save()}));
 };
 
+function notifHead(n){
+  if(n.kind)return{ref:n.ref,dom:n.domLabel,src:n.srcNom,url:n.srcUrl,veille:n.kind==="norme"?"Veille normative":"Veille scientifique"};
+  const T=TEXTES[n.t];return{ref:T.ref,dom:`${DOM[T.dom]} · ${JUR[T.jur]}`,src:T.sourceNom,url:T.source,veille:"Veille réglementaire"}}
 VIEWS.alertes=()=>{if(!S.notifs.length)return`<div class="card empty">Aucune notification.</div>`;
-  return S.notifs.map(n=>{const T=TEXTES[n.t];return`<article class="card notif ${n.lu?"":"unread"}">
-   <div class="texte-head"><div><span class="label">${n.date} · ${n.type}${n.fictif?' · <span style="color:var(--warn)">exemple fictif</span>':""}</span><h2>${esc(n.titre)}</h2></div>${n.lu?"":'<span class="pill p-info">Nouveau</span>'}</div>
-   <div class="ch"><span class="muted">Texte</span><span class="mono">${T.ref}</span><span class="muted">Domaine</span><span>${DOM[T.dom]} · ${JUR[T.jur]}</span><span class="muted">Source</span><a href="${T.source}" target="_blank" rel="noopener">${T.sourceNom} ↗</a></div>
+  return S.notifs.map(n=>{const H=notifHead(n);
+   const imp=n.kind?n.impacts.map(x=>`<li>${esc(x)}</li>`).join(""):n.exig.map(id=>{const e=exigById(id);return e?`<li><span class="mono">${id}</span> ${esc(e.lib)}</li>`:""}).join("");
+   const acts=n.actions.map(id=>{const a=S.actions.find(x=>x.id===id);return a?`<li><span class="mono">${a.id}</span> ${esc(a.txt)} – échéance ${fmt(a.ech)} ${a.val?'<span class="pill p-ok">Validée</span>':'<span class="pill p-warn">À valider par l\'expert</span>'}</li>`:""}).join("");
+   return`<article class="card notif ${n.lu?"":"unread"}">
+   <div class="texte-head"><div><span class="label">${n.date} · ${H.veille} · ${n.type}${n.fictif?' · <span style="color:var(--orange)">exemple fictif</span>':""}</span><h2>${esc(n.titre)}</h2></div>${n.lu?"":'<span class="pill p-info">Nouveau</span>'}</div>
+   <div class="ch"><span class="muted">Référence</span><span class="mono">${esc(H.ref)}</span><span class="muted">Domaine</span><span>${esc(H.dom)}</span><span class="muted">Source</span><a href="${H.url}" target="_blank" rel="noopener">${esc(H.src)} ↗</a></div>
    <div><div class="label">Ce qui change</div><div class="diff">${n.change}</div></div>
    <div><div class="label">Pourquoi vous êtes concerné</div>${esc(n.pourquoi)}</div>
-   <div><div class="label">Exigences impactées</div><ul>${n.exig.map(id=>{const e=exigById(id);return e?`<li><span class="mono">${id}</span> ${esc(e.lib)}</li>`:""}).join("")}</ul></div>
-   <div><div class="label">Plan d'action proposé</div><ul>${n.actions.map(id=>{const a=S.actions.find(x=>x.id===id);return a?`<li><span class="mono">${a.id}</span> ${esc(a.txt)} – échéance ${fmt(a.ech)} ${a.val?pill("conforme").replace("Conforme","Validée"):'<span class="pill p-warn">À valider par l\'expert</span>'}</li>`:""}).join("")}</ul></div>
-   <div class="btns">${n.lu?"":`<button class="btn sm" data-lu="${n.id}" type="button">Marquer comme lu</button>`}<a class="btn sm pri" href="#plan">Ouvrir le plan d'action</a></div>
+   <div><div class="label">${n.kind?"Éléments impactés":"Exigences impactées"}</div><ul>${imp}</ul></div>
+   <div><div class="label">Plan d'action proposé</div>${acts?`<ul>${acts}</ul>`:'<span class="muted">Aucune action requise.</span>'}</div>
+   <div class="btns">${n.lu?"":`<button class="btn sm" data-lu="${n.id}" type="button">Marquer comme lu</button>`}<a class="btn sm pri" href="#plan">Ouvrir le plan d'action</a>${n.kind==="science"?'<a class="btn sm" href="#haccp">Ouvrir la base HACCP</a>':""}${n.kind==="norme"?'<a class="btn sm" href="#normes">Ouvrir les normes</a>':""}</div>
   </article>`}).join("");
 };
 bind.alertes=()=>document.querySelectorAll("[data-lu]").forEach(b=>b.addEventListener("click",()=>{S.notifs.find(n=>n.id===b.dataset.lu).lu=true;save();route()}));
 
-function impact(m){const comptes=[{nom:S.profil.societe,p:S.profil,moi:true}].concat(AUTRES_COMPTES);
-  return comptes.filter(c=>{const e=m.nouv||exigById(m.exig);return enPerimetre(e,c.p)&&e.ok(c.p)})}
+const comptes=()=>[{nom:S.profil.societe,p:S.profil,moi:true}].concat(AUTRES_COMPTES);
+function impact(m){return comptes().filter(c=>{
+  if(m.kind==="norme")return(c.p.normes||[]).includes(m.norme);
+  if(m.kind==="science")return(c.p.produits||[]).includes(m.produit);
+  const e=m.nouv||exigById(m.exig);return enPerimetre(e,c.p)&&e.ok(c.p)})}
+function majHead(m){
+  if(m.kind==="norme"){const N=NORMES[m.norme];return{ref:N.ref,dom:`${DOM[N.dom]} · ${N.org}`,veille:"Veille normative",court:N.ref}}
+  if(m.kind==="science"){const d=DANGERS[m.produit].find(x=>x.id===m.danger);return{ref:"Base HACCP · "+d.nom,dom:PRODUITS[m.produit].nom,veille:"Veille scientifique",court:"HACCP · "+d.nom}}
+  const T=TEXTES[m.t];return{ref:T.ref,dom:`${DOM[T.dom]} · ${JUR[T.jur]}`,veille:"Veille réglementaire",court:m.exig}}
 VIEWS.validation=()=>{const att=MAJ_DETECTEES.filter(m=>!S.majFaites.includes(m.id));
   const done=MAJ_DETECTEES.filter(m=>S.majFaites.includes(m.id));
-  return`<p class="muted" style="margin:0">Les collecteurs surveillent les sources officielles. Rien n'entre dans la base ni n'est envoyé aux clients sans votre validation.</p>
-  ${att.length?att.map(m=>{const T=TEXTES[m.t],imp=impact(m);return`<article class="card texte">
-   <div class="texte-head"><div><span class="label">Détecté le ${m.detecte} · ${m.src}${m.fictif?' · <span style="color:var(--warn)">exemple fictif</span>':""}</span><h2>${esc(m.titre)}</h2></div><span class="pill p-warn">${m.type}</span></div>
-   <div class="meta"><span class="mono">${T.ref}</span><span>${DOM[T.dom]} · ${JUR[T.jur]}</span></div>
-   <div><div class="label">Pré-analyse IA</div>${m.nouv?`<div class="req"><span class="mono">${m.nouv.id}</span><div><b>${esc(m.nouv.lib)}</b><p>Preuve : ${esc(m.nouv.preuve)}</p></div>${echPill(m.nouv.ech)}</div>`:
-     `<div class="diff req"><span class="mono">${m.exig}</span><div><del>${esc(m.avant)}</del><br><ins>${esc(m.apres)}</ins></div><span></span></div>`}</div>
+  return`<p class="muted" style="margin:0">Les collecteurs surveillent les sources officielles des 4 veilles. Rien n'entre dans la base ni n'est envoyé aux clients sans votre validation.</p>
+  ${att.length?att.map(m=>{const H=majHead(m),imp=impact(m);
+   const pre=m.kind?`<div class="req"><span class="mono">${m.kind==="norme"?"Norme":"Danger"}</span><div><b>${esc(m.resume)}</b><p>${esc(m.detail)}</p></div><span></span></div>`:
+     m.nouv?`<div class="req"><span class="mono">${m.nouv.id}</span><div><b>${esc(m.nouv.lib)}</b><p>Preuve : ${esc(m.nouv.preuve)}</p></div>${echPill(m.nouv.ech)}</div>`:
+     `<div class="diff req"><span class="mono">${m.exig}</span><div><del>${esc(m.avant)}</del><br><ins>${esc(m.apres)}</ins></div><span></span></div>`;
+   return`<article class="card texte">
+   <div class="texte-head"><div><span class="label">${H.veille} · détecté le ${m.detecte} · ${m.src}${m.fictif?' · <span style="color:var(--orange)">exemple fictif</span>':""}</span><h2>${esc(m.titre)}</h2></div><span class="pill p-warn">${m.type}</span></div>
+   <div class="meta"><span class="mono">${esc(H.ref)}</span><span>${esc(H.dom)}</span></div>
+   <div><div class="label">Pré-analyse IA</div>${pre}</div>
    <div><div class="label">Actions proposées aux clients</div><ul style="margin:4px 0 0;padding-left:18px">${m.actions.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>
    <div><div class="label">Analyse d'impact : ${imp.length} compte${imp.length>1?"s":""} concerné${imp.length>1?"s":""}</div><div class="btns" style="margin-top:4px">${imp.map(c=>`<span class="tag">${esc(c.nom)}</span>`).join("")||'<span class="muted">Aucun</span>'}</div></div>
    <div class="btns"><button class="btn pri" data-pub="${m.id}" type="button">Valider, publier et notifier</button><button class="btn bad" data-ign="${m.id}" type="button">Rejeter</button></div>
@@ -536,33 +661,85 @@ VIEWS.validation=()=>{const att=MAJ_DETECTEES.filter(m=>!S.majFaites.includes(m.
   ${done.length?`<div class="card"><h2>Historique</h2><div class="list" style="margin-top:6px">${done.map(m=>`<div class="li"><span class="date">${m.detecte}</span><span>${esc(m.titre)}</span><span class="pill p-ok">Traitée</span></div>`).join("")}</div></div>`:""}`;
 };
 bind.validation=()=>{
-  document.querySelectorAll("[data-pub]").forEach(b=>b.addEventListener("click",()=>{const m=MAJ_DETECTEES.find(x=>x.id===b.dataset.pub);
+  document.querySelectorAll("[data-pub]").forEach(b=>b.addEventListener("click",()=>{const m=MAJ_DETECTEES.find(x=>x.id===b.dataset.pub),H=majHead(m);
+    const imp=impact(m),moi=imp.find(c=>c.moi);
     S.majFaites.push(m.id);
     if(m.nouv)S.extra.push(m.exig);
-    const imp=impact(m),moi=imp.find(c=>c.moi);
-    if(moi){const ids=[];m.actions.forEach(txt=>{const n=S.actions.length+1,id="A-"+String(n).padStart(2,"0");
-        const e=m.nouv||exigById(m.exig);
-        S.actions.push({id,ex:m.exig,txt,resp:"À définir",ech:/^\d/.test(e.ech)?e.ech:new Date(today.getTime()+90*864e5).toISOString().slice(0,10),st:"Proposée",val:false});ids.push(id)});
-      const d=new Date().toLocaleDateString("fr-FR");
-      S.notifs.unshift({id:"N-"+m.id,lu:false,date:d,titre:m.titre,t:m.t,type:m.type,fictif:m.fictif,
-        change:m.nouv?`<ins>Nouvelle exigence : ${esc(m.nouv.lib)}</ins>`:`Avant : <del>${esc(m.avant)}</del><br>Maintenant : <ins>${esc(m.apres)}</ins>`,
-        pourquoi:whyOf(m.nouv||exigById(m.exig)),exig:[m.exig],actions:ids});}
+    if(m.kind==="norme")S.normeMaj.push(m.id);
+    if(m.kind==="science"&&moi)S.haccpRevoir.push(m.danger);
+    if(moi){const ids=[],e=m.kind?null:(m.nouv||exigById(m.exig));
+      const ech=m.ech||(/^\d/.test(e.ech)?e.ech:new Date(today.getTime()+90*864e5).toISOString().slice(0,10));
+      m.actions.forEach(txt=>{const id="A-"+String(S.actions.length+1).padStart(2,"0");
+        S.actions.push({id,ex:H.court,txt,resp:"À définir",ech,st:"Proposée",val:false});ids.push(id)});
+      const base={id:"N-"+m.id,lu:false,date:new Date().toLocaleDateString("fr-FR"),titre:m.titre,type:m.type,fictif:m.fictif,actions:ids};
+      S.notifs.unshift(m.kind?{...base,kind:m.kind,ref:H.ref,domLabel:H.dom,srcNom:m.src,srcUrl:m.url,change:esc(m.resume)+" "+esc(m.detail),pourquoi:m.pourquoi,impacts:m.impacts}:
+        {...base,t:m.t,change:m.nouv?`<ins>Nouvelle exigence : ${esc(m.nouv.lib)}</ins>`:`Avant : <del>${esc(m.avant)}</del><br>Maintenant : <ins>${esc(m.apres)}</ins>`,pourquoi:whyOf(e),exig:[m.exig]});}
     save();toast(`Publiée · ${imp.length} compte${imp.length>1?"s":""} notifié${imp.length>1?"s":""}`);route();}));
   document.querySelectorAll("[data-ign]").forEach(b=>b.addEventListener("click",()=>{S.majFaites.push(b.dataset.ign);save();toast("Mise à jour rejetée");route()}));
 };
 
+/* ============ VEILLE NORMATIVE ============ */
+VIEWS.normes=()=>{const sel=S.profil.normes,autres=Object.keys(NORMES).filter(k=>!sel.includes(k));
+  const carte=k=>{const N=NORMES[k];
+    const hist=N.hist.concat(MAJ_DETECTEES.filter(m=>m.kind==="norme"&&m.norme===k&&S.normeMaj.includes(m.id)).map(m=>[m.detecte,m.titre+" (exemple fictif)"]));
+    return`<section class="card texte"><div class="texte-head"><div><span class="mono muted">${N.org}</span><h2>${N.ref}</h2><span class="muted">${N.titre}</span></div>
+     <div class="btns"><span class="tag">${DOM[N.dom]}</span><span class="pill ${N.pill}">${N.statut}</span></div></div>
+     <div class="label">Historique et amendements</div>
+     <div class="list tl">${hist.map(h=>`<div class="li"><span class="date">${h[0]}</span><span>${esc(h[1])}</span></div>`).join("")}</div>
+     <div><div class="label">Ce que cela implique pour vous</div>${esc(N.ecart)}</div>
+     <div class="meta"><a href="${N.url}" target="_blank" rel="noopener">Site officiel : ${N.org} ↗</a></div></section>`};
+  return`<p class="note">Le texte des normes est protégé par le droit d'auteur. VigiLex suit leur statut, leurs révisions et leurs amendements, résume les changements et renvoie vers l'éditeur officiel pour l'achat.</p>
+  ${sel.length?sel.map(carte).join(""):'<div class="card empty">Aucune norme dans votre périmètre. Ajoutez-en dans « Périmètre ».</div>'}
+  ${autres.length?`<div class="card"><h2>Autres normes disponibles dans la base</h2><div class="list" style="margin-top:6px">${autres.map(k=>`<div class="li"><span class="tag">${DOM[NORMES[k].dom]}</span><span><b>${NORMES[k].ref}</b><br><span class="muted">${NORMES[k].titre}</span></span><span class="pill ${NORMES[k].pill}">${NORMES[k].statut}</span></div>`).join("")}</div></div>`:""}`;
+};
+
+/* ============ VEILLE SCIENTIFIQUE ET GUIDES ============ */
+function biblioDe(cat){return BIBLIO.filter(b=>b.cat===cat&&b.prod.some(x=>S.profil.produits.includes(x)))}
+const nomDanger=id=>{for(const k in DANGERS){const d=DANGERS[k].find(x=>x.id===id);if(d)return d.nom}return id};
+VIEWS.science=()=>{const bloc=(titre,cat,vide)=>{const l=biblioDe(cat);
+    return`<div class="card"><h2>${titre}</h2>${l.length?`<div class="list" style="margin-top:6px">${l.map(b=>`<div class="li"><span><span class="tag">${b.type}</span></span>
+      <span><span class="mono muted">${b.org} · ${b.an}</span><br><a href="${b.url}" target="_blank" rel="noopener">${esc(b.titre)} ↗</a>
+      <div class="chips" style="margin-top:5px">${b.dangers.map(d=>`<span class="pill p-info">${esc(nomDanger(d))}</span>`).join("")}</div></span><span></span></div>`).join("")}</div>`:`<div class="empty">${vide}</div>`}</div>`};
+  return`<p class="note">Publications et guides rattachés à vos produits : ${S.profil.produits.map(k=>PRODUITS[k].nom).join(", ")||"aucun produit sélectionné"}. Chaque document est relié aux dangers qu'il documente dans la base HACCP.</p>
+  ${bloc("Avis scientifiques, rapports et alertes","sci","Aucune publication pour vos produits.")}
+  ${bloc("Guides d'application, codes d'usages et normes produit","guide","Aucun guide pour vos produits.")}`;
+};
+
+/* ============ BASE HACCP ============ */
+VIEWS.haccp=()=>{const pr=S.profil.produits;
+  if(!pr.length)return`<div class="card empty">Aucun produit dans votre périmètre. Ajoutez-en dans « Périmètre ».</div>`;
+  return`<p class="note">Bibliothèque des dangers par produit, chacun relié à ses sources réglementaires, scientifiques et à ses guides. Elle sert de base documentée à l'analyse des dangers (principe 1 de l'HACCP). Le classement CCP / PRPo / PRP est indicatif : il se décide dans l'étude HACCP du site.</p>
+  ${pr.map(k=>{const D=DANGERS[k];
+   if(!D)return`<div class="card"><h2>${PRODUITS[k].nom}</h2><div class="empty">Fiche à préparer par l'expert.</div></div>`;
+   const src=(d,cat)=>BIBLIO.filter(b=>b.cat===cat&&b.dangers.includes(d.id));
+   return`<div class="card" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><div><span class="label">Produit</span><h2>${PRODUITS[k].nom}</h2></div>
+     <span><b>${D.length}</b> dangers documentés${S.haccpRevoir.length?` · <b style="color:var(--orange)">${D.filter(d=>S.haccpRevoir.includes(d.id)).length} à revoir</b>`:""}</span></div>
+   <div class="tbl"><table><thead><tr><th>Danger</th><th>Type</th><th>Étape</th><th style="min-width:240px">Limite / référence</th><th>Sources</th><th>Maîtrise</th></tr></thead><tbody>
+   ${D.map(d=>`<tr><td><b>${esc(d.nom)}</b>${S.haccpRevoir.includes(d.id)?'<br><span class="pill p-warn">À revoir : nouvel avis</span>':""}</td>
+    <td><span class="tag">${d.type}</span></td><td>${esc(d.etape)}</td><td>${esc(d.limite)}</td>
+    <td><div class="chips">${d.reg.map(r=>`<span class="pill p-info" title="Réglementaire">${esc(r)}</span>`).join("")}${src(d,"sci").map(b=>`<span class="pill p-warn" title="${esc(b.titre)}">${b.org} ${b.an}</span>`).join("")}${src(d,"guide").map(b=>`<span class="pill p-ok" title="${esc(b.titre)}">${b.org==="Codex"?b.an:b.org+" "+b.an}</span>`).join("")}</div></td>
+    <td>${esc(d.maitrise)}<br><span class="tag">${d.niveau}</span></td></tr>`).join("")}
+   </tbody></table></div>
+   <div class="meta"><span><span class="pill p-info">Réglementaire</span></span><span><span class="pill p-warn">Scientifique</span></span><span><span class="pill p-ok">Guide / Codex</span></span></div>`}).join("")}`;
+};
+
 const SOURCES=[
-  {n:"EUR-Lex – Journal officiel de l'UE",u:"https://eur-lex.europa.eu",m:"API / flux RSS",j:"UE"},
-  {n:"Commission européenne – PPWR (FAQ, actes d'exécution)",u:"https://environment.ec.europa.eu",m:"Page surveillée",j:"UE"},
-  {n:"SGG – Bulletin officiel du Royaume",u:"https://www.sgg.gov.ma",m:"PDF + OCR (arabe/français)",j:"MA"},
-  {n:"Ministère de l'Emploi",u:"https://www.emploi.gov.ma",m:"Page surveillée",j:"MA"},
-  {n:"Direction générale de la Protection civile",u:"https://www.protectioncivile.ma",m:"Page surveillée",j:"MA"},
-  {n:"ONSSA",u:"https://www.onssa.gov.ma",m:"Page surveillée",j:"MA"},
+  {n:"EUR-Lex – Journal officiel de l'UE",u:"https://eur-lex.europa.eu",m:"Réglementaire · API"},
+  {n:"SGG – Bulletin officiel du Royaume",u:"https://www.sgg.gov.ma",m:"Réglementaire · PDF + OCR"},
+  {n:"ONSSA",u:"https://www.onssa.gov.ma",m:"Réglementaire · page"},
+  {n:"Ministère de l'Emploi",u:"https://www.emploi.gov.ma",m:"Réglementaire · page"},
+  {n:"ISO – normes en cours d'élaboration",u:"https://www.iso.org",m:"Normative · page"},
+  {n:"IMANOR – normes marocaines",u:"https://www.imanor.gov.ma",m:"Normative · page"},
+  {n:"FSSC, BRCGS, IFS – référentiels GFSI",u:"https://www.fssc.com",m:"Normative · page"},
+  {n:"EFSA Journal",u:"https://www.efsa.europa.eu",m:"Scientifique · flux RSS"},
+  {n:"RASFF – alertes sanitaires",u:"https://webgate.ec.europa.eu/rasff-window",m:"Scientifique · portail"},
+  {n:"Codex Alimentarius",u:"https://www.fao.org/fao-who-codexalimentarius",m:"Guides · page"},
 ];
 VIEWS.base=()=>`<div class="grid two">
-  <div class="card"><h2>Textes en base</h2><div class="list" style="margin-top:6px">${Object.values(TEXTES).map(T=>`<div class="src"><span><span class="mono muted">${T.ref}</span><br>${T.titre}</span><span class="tag">${JUR[T.jur]}</span></div>`).join("")}</div>
+  <div class="card"><h2>Contenu de la base</h2><div class="veilles" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px"><a><span class="label">Textes</span><b>${Object.keys(TEXTES).length}</b></a><a><span class="label">Normes</span><b>${Object.keys(NORMES).length}</b></a><a><span class="label">Publications</span><b>${BIBLIO.filter(b=>b.cat==="sci").length}</b></a><a><span class="label">Guides</span><b>${BIBLIO.filter(b=>b.cat==="guide").length}</b></a></div>
+   <div class="list" style="margin-top:10px">${Object.values(TEXTES).map(T=>`<div class="src"><span><span class="mono muted">${T.ref}</span><br>${T.titre}</span><span class="tag">${JUR[T.jur]}</span></div>`).join("")}</div>
    <button class="btn" type="button" style="margin-top:12px" onclick="toast('Import d\\'une fiche Markdown : prévu dans l\\'application Flutter')">+ Ajouter un texte (fiche .md)</button></div>
-  <div class="card"><h2>Sources officielles surveillées</h2><div class="list" style="margin-top:6px">${SOURCES.map(s=>`<div class="src"><span><b>${s.n}</b><br><a href="${s.u}" target="_blank" rel="noopener" class="mono">${s.u.replace("https://","")}</a></span><span class="tag">${s.m}</span></div>`).join("")}</div></div>
+  <div class="card"><h2>Sources officielles surveillées</h2><div class="list" style="margin-top:6px">${SOURCES.map(s=>`<div class="src"><span><b>${s.n}</b><br><a href="${s.u}" target="_blank" rel="noopener" class="mono">${s.u.replace("https://","").split("/")[0]}</a></span><span class="tag">${s.m}</span></div>`).join("")}</div></div>
  </div>`;
 
 /* ============ DÉMARRAGE ============ */
