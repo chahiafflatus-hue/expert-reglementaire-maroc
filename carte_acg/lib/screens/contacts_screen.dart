@@ -106,11 +106,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   Future<void> _export() async {
     final all = await ContactsDb.instance.list();
-    if (all.isEmpty) {
-      _snack('Aucun contact à exporter.');
+    final history = await ContactsDb.instance.history();
+    if (all.isEmpty && history.isEmpty) {
+      _snack('Aucun contact ni historique à exporter.');
       return;
     }
-    await shareContactsXlsx(all);
+    await shareContactsXlsx(all, history: history);
   }
 
   @override

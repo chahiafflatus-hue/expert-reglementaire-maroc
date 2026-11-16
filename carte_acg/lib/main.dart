@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 
 import 'config.dart';
 import 'screens/contacts_screen.dart';
+import 'screens/history_screen.dart';
 import 'screens/my_card_screen.dart';
 
 void main() => runApp(const CarteAcgApp());
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: IndexedStack(
         index: _tab,
-        children: const [MyCardScreen(), ContactsScreen()],
+        children: const [MyCardScreen(), ContactsScreen(), HistoryScreen()],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tab,
@@ -65,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.contacts_outlined),
             label: 'Contacts',
           ),
+          NavigationDestination(icon: Icon(Icons.history), label: 'Historique'),
         ],
       ),
     );

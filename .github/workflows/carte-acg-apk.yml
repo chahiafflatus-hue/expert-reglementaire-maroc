@@ -27,6 +27,8 @@ jobs:
           channel: stable
           flutter-version: '3.50.0'
           cache: true
+      # Bibliothèque SQLite utilisée par les tests de la base de données.
+      - run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test

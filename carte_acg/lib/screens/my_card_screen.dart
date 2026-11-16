@@ -7,7 +7,9 @@ import '../models/card_data.dart';
 import '../models/vcard.dart';
 import '../services/profile_store.dart';
 import '../services/share_service.dart';
+import '../models/share_entry.dart';
 import 'edit_card_screen.dart';
+import 'history_screen.dart';
 import 'nfc_sheet.dart';
 
 /// Écran principal : la carte du consultant, avec son QR code à faire scanner.
@@ -77,10 +79,27 @@ class _MyCardScreenState extends State<MyCardScreen> {
                               : 'SCANNEZ POUR ENREGISTRER\nMON CONTACT',
                           size:
                               (box.maxHeight -
-                                      360 -
+                                      400 -
                                       (card.email2.isEmpty ? 0 : 28) -
                                       (card.qualifications.isEmpty ? 0 : 58))
                                   .clamp(170.0, 240.0),
+                        ),
+                      ),
+                      Center(
+                        child: TextButton.icon(
+                          onPressed: () => Navigator.of(context).push<void>(
+                            MaterialPageRoute(
+                              builder: (_) => HistoryEntryScreen(
+                                entry: ShareEntry(
+                                  kind: _besoin
+                                      ? ShareEntry.kindBesoin
+                                      : ShareEntry.kindContact,
+                                ),
+                              ),
+                            ),
+                          ),
+                          icon: const Icon(Icons.edit_note, size: 18),
+                          label: const Text('Noter ce partage'),
                         ),
                       ),
                       _Actions(

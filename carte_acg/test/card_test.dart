@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carte_acg/models/card_data.dart';
 import 'package:carte_acg/models/contact.dart';
+import 'package:carte_acg/models/share_entry.dart';
 import 'package:carte_acg/models/vcard.dart';
 import 'package:carte_acg/services/card_parser.dart';
 import 'package:carte_acg/services/nfc_records.dart';
@@ -188,14 +189,25 @@ Lot 12, Zone Industrielle Ain Sebaa, Casablanca
   });
 
   test('export Excel : en-tête et contacts relus depuis le fichier', () {
-    final bytes = contactsToXlsx([
-      const Contact(
-        name: 'Youssef El Amrani',
-        company: 'Atlas Food',
-        phone: '+212661234567',
-      ),
-      const Contact(name: 'Sara Benali', email: 'sara@nutrimar.ma'),
-    ]);
+    final when = DateTime(2026, 11, 16, 9, 5);
+    final bytes = contactsToXlsx(
+      history: [
+        ShareEntry(
+          kind: ShareEntry.kindBesoin,
+          name: 'Nadia',
+          company: 'Atlas Food',
+          createdAt: when,
+        ),
+      ],
+      [
+        const Contact(
+          name: 'Youssef El Amrani',
+          company: 'Atlas Food',
+          phone: '+212661234567',
+        ),
+        const Contact(name: 'Sara Benali', email: 'sara@nutrimar.ma'),
+      ],
+    );
     final sheet = Excel.decodeBytes(bytes)['Contacts'];
     String cell(int r, int c) => sheet.rows[r][c]?.value.toString() ?? '';
     expect(sheet.maxRows, 3);
@@ -204,5 +216,12 @@ Lot 12, Zone Industrielle Ain Sebaa, Casablanca
     expect(cell(1, 0), 'Youssef El Amrani');
     expect(cell(1, 3), '+212661234567');
     expect(cell(2, 4), 'sara@nutrimar.ma');
+
+    final history = Excel.decodeBytes(bytes)['Historique'];
+    expect(history.rows[0][0]?.value.toString(), 'Date');
+    expect(
+      [for (final c in history.rows[1].take(4)) c?.value.toString()],
+      ['16/11/2026 09:05', 'Expression de besoin', 'Nadia', 'Atlas Food'],
+    );
   });
 }
